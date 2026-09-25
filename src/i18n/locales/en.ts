@@ -17,6 +17,7 @@ const en: typeof tr = {
     distanceMeters: '{{count}} m',
     distanceKm: '{{count}} km',
     groupOnly: 'Group only',
+    loading: 'Loading',
   },
   tabs: {
     discover: 'Discover',
@@ -403,6 +404,10 @@ const en: typeof tr = {
     item: 'Share',
     message: '{{title}} — from a neighbour on StreetShelf: {{url}}',
     groupInvite: 'Join {{name}}: open StreetShelf and enter the invite code {{code}}.',
+  },
+  connection: {
+    offline: 'No internet connection',
+    back: 'Back online',
   },
 };
 

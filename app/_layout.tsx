@@ -11,7 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import '../src/i18n';
-import { AnimatedSplash, Toast } from '../src/components';
+import { AnimatedSplash, OfflineBanner, Toast } from '../src/components';
+import { useConnection } from '../src/stores/connection';
 import { useSession } from '../src/stores/session';
 import { DevRouteJumper } from '../src/dev/DevRouteJumper';
 import { colors, type as typography } from '../src/theme/tokens';
@@ -73,6 +74,13 @@ export default function RootLayout() {
 
   useAuthGuard(ready);
 
+  const watchConnection = useConnection((s) => s.watch);
+  useEffect(() => watchConnection(), [watchConnection]);
+  // The offline bar paints the status-bar area ink, so the clock has to turn
+  // white while it is up. The status bar belongs to each screen's view
+  // controller on iOS, so this is set through the stack, not app-wide.
+  const offline = useConnection((s) => s.offline);
+
   if (!ready) return null;
 
   return (
@@ -85,6 +93,7 @@ export default function RootLayout() {
             headerTintColor: colors.text,
             headerTitleStyle: { fontFamily: typography.family.bold, fontSize: typography.size.lg },
             contentStyle: { backgroundColor: colors.canvas },
+            statusBarStyle: offline ? 'light' : 'dark',
             headerBackButtonDisplayMode: 'minimal',
           }}
         >
@@ -112,6 +121,7 @@ export default function RootLayout() {
           <Stack.Screen name="report" options={{ title: t('report.title'), presentation: 'modal' }} />
           <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
         </Stack>
+        <OfflineBanner />
         <Toast />
         {splashDone ? null : <AnimatedSplash onReady={hideNativeSplash} onFinish={finishSplash} />}
         {__DEV__ ? <DevRouteJumper /> : null}

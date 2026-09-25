@@ -12,7 +12,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Teslim ve iade anını fotoğraflamak için kamera gerekir.",
         "NSPhotoLibraryUsageDescription": "İlan fotoğrafı seçmek için galeri erişimi gerekir.",
-        "NSLocationWhenInUseUsageDescription": "Yakınındaki ilanları göstermek için konumun kullanılır."
+        "NSLocationWhenInUseUsageDescription": "Yakınındaki ilanları göstermek için konumun kullanılır.",
+        "UIViewControllerBasedStatusBarAppearance": true
       }
     },
     "android": {

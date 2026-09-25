@@ -14,6 +14,7 @@ const tr = {
     distanceMeters: '{{count}} m',
     distanceKm: '{{count}} km',
     groupOnly: 'Sadece grup',
+    loading: 'Yükleniyor',
   },
   tabs: {
     discover: 'Keşfet',
@@ -400,6 +401,10 @@ const tr = {
     item: 'Paylaş',
     message: '{{title}} — StreetShelf\u2019de komşundan: {{url}}',
     groupInvite: '{{name}} grubuna katıl: StreetShelf\u2019i aç ve {{code}} davet kodunu gir.',
+  },
+  connection: {
+    offline: 'İnternet bağlantısı yok',
+    back: 'Tekrar çevrimiçisin',
   },
 };
 
