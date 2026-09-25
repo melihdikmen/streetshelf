@@ -4,7 +4,8 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Avatar, Card, ItemCard, ListRow, Screen, StarRating } from '../../src/components';
+import { AppText, Avatar, Card, ItemCard, ItemGridSkeleton, ListRow, Screen, StarRating } from '../../src/components';
+import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
 import { styles } from '../../src/screens/tabs/profile.styles';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
@@ -17,6 +18,8 @@ export default function ProfileScreen() {
   const allMyItems = useSession((s) => s.myItems);
   const myItems = useMemo(() => allMyItems.filter((i) => i.status !== 'ARCHIVED'), [allMyItems]);
   const myStats = useSession((s) => s.myStats);
+  const itemsLoaded = useSession((s) => s.loaded.myItems);
+  const cellWidth = useGridCellWidth();
   const groupCount = useSession((s) => s.groups.length);
   const loadMyItems = useSession((s) => s.loadMyItems);
   const loadProfile = useSession((s) => s.loadProfile);
@@ -78,6 +81,7 @@ export default function ProfileScreen() {
       <AppText variant="title" style={styles.sectionTitle}>
         {t('profile.myItems')}
       </AppText>
+      {!itemsLoaded && myItems.length === 0 ? <ItemGridSkeleton cellWidth={cellWidth} count={2} /> : null}
       <View style={styles.grid}>
         {myItems.map((item) => (
           <View key={item.id} style={item.requestType === 'WANTED' ? styles.gridRow : styles.gridCell}>

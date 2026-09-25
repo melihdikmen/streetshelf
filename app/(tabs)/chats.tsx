@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, RefreshControl, View } from 'react-native';
 
-import { AppText, ConversationRow, EmptyState, Screen } from '../../src/components';
+import { AppText, ConversationListSkeleton, ConversationRow, EmptyState, Screen } from '../../src/components';
 import { styles } from '../../src/screens/tabs/chats.styles';
 import { useSession } from '../../src/stores/session';
 import type { Conversation } from '../../src/types/domain';
@@ -24,6 +24,7 @@ export default function ChatsScreen() {
   const conversations = useSession((s) => s.conversations);
   const loadConversations = useSession((s) => s.loadConversations);
   const showError = useSession((s) => s.showError);
+  const loaded = useSession((s) => s.loaded.conversations);
   const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
@@ -51,7 +52,13 @@ export default function ChatsScreen() {
         ItemSeparatorComponent={Separator}
         contentContainerStyle={styles.list}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
-        ListEmptyComponent={<EmptyState icon="message-outline" title={t('chats.empty')} body={t('chats.emptyBody')} />}
+        ListEmptyComponent={
+          loaded ? (
+            <EmptyState icon="message-outline" title={t('chats.empty')} body={t('chats.emptyBody')} />
+          ) : (
+            <ConversationListSkeleton />
+          )
+        }
       />
     </Screen>
   );

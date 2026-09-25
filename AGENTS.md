@@ -143,6 +143,12 @@ This is a rule, not a cleanup pass. Concretely:
   first frame. Screens render a skeleton immediately rather than blocking on data.
 - **Text input is uncontrolled where it can be** (chat composer, search) if typing lags;
   otherwise keep the controlled state local to the input's screen, never in the store.
+- **Loading states are skeletons**, never a spinner on a blank screen. Use (or add to)
+  `src/components/molecules/Skeletons.tsx`, shaped like the real component so nothing moves when
+  data lands. Show them only on a first load (`loaded.*` in the store, or a `null` local state);
+  a refresh keeps the cached rows on screen. All skeletons share one shimmer clock in
+  `atoms/Skeleton.tsx` and respect the system reduce-motion setting; do not give a skeleton its
+  own animation.
 - **Measure before optimising further**: Metro's perf monitor for JS FPS, Xcode Instruments
   for native; a fix without a measurement is a guess. Run the `react-native-best-practices`
   skill's checklist when touching lists, animations or anything that re-renders often.

@@ -5,6 +5,7 @@ import { colors, radius, spacing, touchTarget, type } from '../../theme/tokens';
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.canvas },
   flex: { flex: 1 },
+  hidden: { display: 'none' },
   headerTitle: {
     flexDirection: 'row',
     alignItems: 'center',

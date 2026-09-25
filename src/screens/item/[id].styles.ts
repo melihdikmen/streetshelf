@@ -4,7 +4,6 @@ import { colors, radius, shadow, spacing } from '../../theme/tokens';
 
 export const styles = StyleSheet.create({
   scroll: { paddingBottom: spacing.xxxl },
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   gallery: { backgroundColor: colors.canvasAlt },
   galleryPlaceholder: {
     alignItems: 'center',

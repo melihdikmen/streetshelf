@@ -78,16 +78,6 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.canvasAlt,
   },
   mapCardText: { flex: 1, gap: spacing.xs },
-  skeletonGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-    padding: spacing.lg,
-  },
-  skeletonCard: {
-    width: '47%',
-    gap: spacing.sm,
-  },
   scopeRow: { gap: spacing.sm },
   chipRow: { gap: spacing.sm },
   list: {

@@ -1,9 +1,9 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, View } from 'react-native';
 
-import { AppText, ReviewCard, Screen, StarRating } from '../../src/components';
+import { AppText, ReviewCard, ReviewListSkeleton, Screen, StarRating } from '../../src/components';
 import { styles } from '../../src/screens/reviews/[userId].styles';
 import { useSession } from '../../src/stores/session';
 
@@ -17,8 +17,12 @@ export default function ReviewsScreen() {
   const loadReviewsFor = useSession((s) => s.loadReviewsFor);
   const showError = useSession((s) => s.showError);
 
+  const [loaded, setLoaded] = useState(false);
+
   useEffect(() => {
-    loadReviewsFor(userId).catch(showError);
+    loadReviewsFor(userId)
+      .then(() => setLoaded(true))
+      .catch(showError);
   }, [loadReviewsFor, showError, userId]);
   const reviews = useMemo(() => allReviews.filter((r) => r.toId === userId), [allReviews, userId]);
   const average = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
@@ -30,6 +34,7 @@ export default function ReviewsScreen() {
       <FlatList
         data={reviews}
         keyExtractor={(r) => r.id}
+        ListEmptyComponent={loaded ? null : <ReviewListSkeleton />}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <View style={styles.summary}>

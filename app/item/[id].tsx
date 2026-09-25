@@ -3,10 +3,10 @@ import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Share, View, useWindowDimensions } from 'react-native';
+import { Alert, Pressable, ScrollView, Share, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Avatar, Button, ModeBadge, Screen, StarRating } from '../../src/components';
+import { AppText, Avatar, Button, ItemDetailSkeleton, ModeBadge, Screen, StarRating } from '../../src/components';
 import { styles } from '../../src/screens/item/[id].styles';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
@@ -48,10 +48,11 @@ export default function ItemDetailScreen() {
 
   if (!item) {
     return (
-      <Screen>
-        <View style={styles.loading}>
-          <ActivityIndicator color={colors.accent} />
-        </View>
+      <Screen padded={false} edges={['left', 'right']}>
+        <ItemDetailSkeleton />
+        <Pressable accessibilityRole="button" onPress={() => router.back()} style={[styles.back, { top: insets.top + 8 }]}>
+          <MaterialCommunityIcons name="arrow-left" size={22} color={colors.text} />
+        </Pressable>
       </Screen>
     );
   }

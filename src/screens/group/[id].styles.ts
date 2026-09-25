@@ -32,6 +32,7 @@ export const styles = StyleSheet.create({
   },
   gridCell: { width: '48%' },
   gridRow: { width: '100%' },
+  hidden: { display: 'none' },
   member: {
     flexDirection: 'row',
     alignItems: 'center',

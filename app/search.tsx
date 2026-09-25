@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, TextInput, View } from 'react-native';
 
-import { AppText, Chip, EmptyState, ItemCard, Screen } from '../src/components';
+import { AppText, Chip, EmptyState, ItemCard, ItemGridSkeleton, Screen } from '../src/components';
 import { styles } from '../src/screens/search.styles';
 import { useGridCellWidth } from '../src/hooks/useGridCellWidth';
 import { useSession } from '../src/stores/session';
@@ -127,7 +127,9 @@ export default function SearchScreen() {
             </View>
           )}
           ListEmptyComponent={
-            searching ? null : (
+            searching ? (
+              <ItemGridSkeleton cellWidth={cellWidth} count={4} />
+            ) : (
             <EmptyState
               icon="magnify-close"
               title={t('search.noResults', { query: query.trim() })}

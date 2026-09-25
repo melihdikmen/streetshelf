@@ -4,7 +4,19 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Avatar, Button, ItemCard, ReviewCard, Screen, StarRating } from '../../src/components';
+import {
+  AppText,
+  Avatar,
+  Button,
+  ItemCard,
+  ItemGridSkeleton,
+  ProfileHeaderSkeleton,
+  ReviewCard,
+  ReviewListSkeleton,
+  Screen,
+  StarRating,
+} from '../../src/components';
+import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
 import { styles } from '../../src/screens/user/[id].styles';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
@@ -22,21 +34,34 @@ export default function UserProfileScreen() {
   const loadReviewsFor = useSession((s) => s.loadReviewsFor);
   const loadUserItems = useSession((s) => s.loadUserItems);
   const showError = useSession((s) => s.showError);
-  const [userItems, setUserItems] = useState<Item[]>([]);
+  const [userItems, setUserItems] = useState<Item[] | null>(null);
+  const [reviewsLoaded, setReviewsLoaded] = useState(false);
+  const cellWidth = useGridCellWidth();
   const user = id === me.id ? me : profiles[id];
 
   useEffect(() => {
-    void Promise.all([loadProfile(id), loadReviewsFor(id), loadUserItems(id).then(setUserItems)]).catch(showError);
+    void Promise.all([
+      loadProfile(id),
+      loadReviewsFor(id).then(() => setReviewsLoaded(true)),
+      loadUserItems(id).then(setUserItems),
+    ]).catch(showError);
   }, [id, loadProfile, loadReviewsFor, loadUserItems, showError]);
 
   const items = useMemo(
-    () => userItems.filter((i) => i.requestType === 'OFFER' && (i.status === 'ACTIVE' || i.status === 'RESERVED')),
+    () => (userItems ?? []).filter((i) => i.requestType === 'OFFER' && (i.status === 'ACTIVE' || i.status === 'RESERVED')),
     [userItems],
   );
   const reviews = useMemo(() => allReviews.filter((r) => r.toId === id), [allReviews, id]);
   const average = useMemo(() => (reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : user?.rating), [reviews, user]);
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <Screen scroll edges={['left', 'right']}>
+        <ProfileHeaderSkeleton centered />
+        <ItemGridSkeleton cellWidth={cellWidth} count={2} />
+      </Screen>
+    );
+  }
   const since = user.memberSince ? new Date(user.memberSince).getFullYear() : undefined;
 
   return (
@@ -72,6 +97,7 @@ export default function UserProfileScreen() {
       <AppText variant="title" style={styles.sectionTitle}>
         {t('user.listings')} · {items.length}
       </AppText>
+      {userItems ? null : <ItemGridSkeleton cellWidth={cellWidth} count={2} />}
       <View style={styles.grid}>
         {items.map((item) => (
           <View key={item.id} style={styles.gridCell}>
@@ -84,8 +110,9 @@ export default function UserProfileScreen() {
         {t('user.reviews')} · {reviews.length}
       </AppText>
       <View style={styles.reviews}>
+        {reviews.length === 0 && !reviewsLoaded ? <ReviewListSkeleton count={2} /> : null}
         {reviews.length === 0 ? (
-          <AppText tone="muted">{t('review.none')}</AppText>
+          reviewsLoaded ? <AppText tone="muted">{t('review.none')}</AppText> : null
         ) : (
           reviews.slice(0, 3).map((review) => {
             const author = review.fromId === me.id ? me : profiles[review.fromId];

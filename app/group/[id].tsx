@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Share, View } from 'react-native';
 
-import { AppText, Avatar, Button, Card, ItemCard, Screen } from '../../src/components';
+import { AppText, Avatar, Button, Card, ItemCard, ItemGridSkeleton, MemberListSkeleton, Screen } from '../../src/components';
+import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
 import { styles } from '../../src/screens/group/[id].styles';
 import { groupsApi } from '../../src/services/supabase';
 import type { GroupMember } from '../../src/services/supabase/groups';
@@ -23,8 +24,10 @@ export default function GroupDetailScreen() {
   const leaveGroup = useSession((s) => s.leaveGroup);
   const showToast = useSession((s) => s.showToast);
   const showError = useSession((s) => s.showError);
-  const [items, setItems] = useState<Item[]>([]);
-  const [members, setMembers] = useState<GroupMember[]>([]);
+  // null until loaded, so the skeletons can tell "loading" from "empty".
+  const [items, setItems] = useState<Item[] | null>(null);
+  const [members, setMembers] = useState<GroupMember[] | null>(null);
+  const cellWidth = useGridCellWidth();
 
   useEffect(() => {
     loadGroupItems(id).then(setItems).catch(showError);
@@ -84,10 +87,11 @@ export default function GroupDetailScreen() {
       </Card>
 
       <AppText variant="title" style={styles.sectionTitle}>
-        {t('groupMore.detailListings', { count: items.length })}
+        {t('groupMore.detailListings', { count: items?.length ?? 0 })}
       </AppText>
+      {items ? null : <ItemGridSkeleton cellWidth={cellWidth} count={2} />}
       <View style={styles.grid}>
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <View key={item.id} style={item.requestType === 'WANTED' ? styles.gridRow : styles.gridCell}>
             <ItemCard item={item} onPress={() => router.push({ pathname: '/item/[id]', params: { id: item.id } })} />
           </View>
@@ -97,8 +101,9 @@ export default function GroupDetailScreen() {
       <AppText variant="title" style={styles.sectionTitle}>
         {t('groupMore.members')}
       </AppText>
-      <Card padded={false}>
-        {members.map((member, index) => (
+      {members ? null : <MemberListSkeleton />}
+      <Card padded={false} style={members ? undefined : styles.hidden}>
+        {(members ?? []).map((member, index) => (
           <Pressable
             key={member.profile.id}
             accessibilityRole="button"

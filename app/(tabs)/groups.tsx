@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { AppText, Button, Card, EmptyState, Screen } from '../../src/components';
+import { AppText, Button, Card, EmptyState, GroupListSkeleton, Screen } from '../../src/components';
 import { styles } from '../../src/screens/tabs/groups.styles';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
@@ -19,6 +19,7 @@ export default function GroupsScreen() {
   const groups = useSession((s) => s.groups);
   const loadGroups = useSession((s) => s.loadGroups);
   const showError = useSession((s) => s.showError);
+  const loaded = useSession((s) => s.loaded.groups);
 
   useFocusEffect(
     useCallback(() => {
@@ -40,7 +41,8 @@ export default function GroupsScreen() {
         {t('profile.myGroups')}
       </AppText>
       <View style={styles.list}>
-        {groups.length === 0 ? (
+        {groups.length === 0 && !loaded ? <GroupListSkeleton /> : null}
+        {groups.length === 0 && loaded ? (
           <EmptyState icon="home-group" title={t('groupMore.emptyTitle')} body={t('groupMore.emptyBody')} />
         ) : null}
         {groups.map((group) => (

@@ -6,15 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { ActionSheetIOS, FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Avatar, MessageBubble, ModeBadge, TransactionCard } from '../../src/components';
+import { AppText, Avatar, ChatSkeleton, MessageBubble, ModeBadge, TransactionCard } from '../../src/components';
 import { styles } from '../../src/screens/chat/[id].styles';
 import { chatApi } from '../../src/services/supabase';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
 import type { Message, Transaction } from '../../src/types/domain';
-
-/** Stable empty list: a fresh `[]` from a selector would re-render forever. */
-const NO_MESSAGES: Message[] = [];
 
 /**
  * Chat thread. Text bubbles interleaved with transaction cards; the header
@@ -29,7 +26,9 @@ export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const me = useSession((s) => s.me);
   const conversation = useSession((s) => s.conversations.find((c) => c.id === id));
-  const messages = useSession((s) => s.messages[id] ?? NO_MESSAGES);
+  // Undefined until the first fetch lands; that is when the skeleton shows.
+  // (Selecting `?? []` here would hand zustand a fresh array every render.)
+  const messages = useSession((s) => s.messages[id]);
   const transactions = useSession((s) => s.transactions);
   const loadConversations = useSession((s) => s.loadConversations);
   const loadMessages = useSession((s) => s.loadMessages);
@@ -187,9 +186,11 @@ export default function ChatScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={insets.top + 56}
       >
+        {messages ? null : <ChatSkeleton />}
         <FlatList
           ref={listRef}
           data={messages}
+          style={messages ? undefined : styles.hidden}
           keyExtractor={(m) => m.id}
           renderItem={renderMessage}
           contentContainerStyle={styles.list}

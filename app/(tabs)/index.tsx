@@ -6,7 +6,17 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Platform, Pressable, RefreshControl, ScrollView, View } from 'react-native';
 
-import { AppText, Chip, EmptyState, ItemCard, ModeBadge, Screen, SegmentedControl, Skeleton } from '../../src/components';
+import {
+  AppText,
+  Chip,
+  EmptyState,
+  ItemCard,
+  ItemGridSkeleton,
+  ModeBadge,
+  Screen,
+  SegmentedControl,
+  WantedListSkeleton,
+} from '../../src/components';
 import { styles } from '../../src/screens/tabs/index.styles';
 import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
 import { useSession } from '../../src/stores/session';
@@ -142,14 +152,8 @@ export default function DiscoverScreen() {
       {view === 'map' ? (
         <MapView items={items} focused={focused} onFocus={setFocused} onOpen={openItem} />
       ) : loading ? (
-        <View style={styles.skeletonGrid}>
-          {[0, 1, 2, 3].map((i) => (
-            <View key={i} style={styles.skeletonCard}>
-              <Skeleton height={120} radius={16} />
-              <Skeleton height={16} width="80%" />
-              <Skeleton height={12} width="50%" />
-            </View>
-          ))}
+        <View style={styles.list}>
+          {isWanted ? <WantedListSkeleton /> : <ItemGridSkeleton cellWidth={cellWidth} count={6} />}
         </View>
       ) : (
         <FlatList

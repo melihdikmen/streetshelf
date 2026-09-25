@@ -43,6 +43,15 @@ import type {
 
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 
+/** Lists whose first successful load gates the skeleton placeholders. */
+export type LoadedKey = 'conversations' | 'transactions' | 'groups' | 'myItems';
+const NOTHING_LOADED: Record<LoadedKey, boolean> = {
+  conversations: false,
+  transactions: false,
+  groups: false,
+  myItems: false,
+};
+
 export interface FeedParams {
   direction: RequestType;
   types: ItemType[] | null;
@@ -103,6 +112,12 @@ interface SessionState {
   blockedUserIds: string[];
   recentSearches: string[];
   toast: string | null;
+  /**
+   * True once a list has loaded at least once this session. Screens show
+   * skeletons only while this is false; afterwards they keep the cached rows
+   * on screen during a refresh.
+   */
+  loaded: Record<LoadedKey, boolean>;
 
   bootstrap: () => () => void;
   sendOtp: (email: string) => Promise<void>;
@@ -232,7 +247,13 @@ export const useSession = create<SessionState>((set, get) => {
       reviewedTransactionIds: [],
       unavailable: {},
       blockedUserIds: [],
+      loaded: NOTHING_LOADED,
     });
+  }
+
+  /** Records a list's first successful load. */
+  function markLoaded(key: LoadedKey): void {
+    if (!get().loaded[key]) set((state) => ({ loaded: { ...state.loaded, [key]: true } }));
   }
 
   let feedRequest = 0;
@@ -262,6 +283,7 @@ export const useSession = create<SessionState>((set, get) => {
     blockedUserIds: [],
     recentSearches: [],
     toast: null,
+    loaded: NOTHING_LOADED,
 
     bootstrap: () => {
       void (async () => {
@@ -352,6 +374,7 @@ export const useSession = create<SessionState>((set, get) => {
       if (!userId) return;
       const myItems = await hydrate(await itemsApi.getItemsByOwner(userId, null));
       set({ myItems });
+      markLoaded('myItems');
     },
 
     loadUserItems: async (userId) => hydrate(await itemsApi.getItemsByOwner(userId, get().origin)),
@@ -406,6 +429,7 @@ export const useSession = create<SessionState>((set, get) => {
         missing.length ? get().loadItems(missing) : Promise.resolve(),
         ensureProfiles(transactions.flatMap((t) => [t.ownerId, t.borrowerId])),
       ]);
+      markLoaded('transactions');
     },
 
     refreshTransaction: async (id) => {
@@ -459,6 +483,7 @@ export const useSession = create<SessionState>((set, get) => {
           unread: s.unread,
         }));
       set({ conversations });
+      markLoaded('conversations');
     },
 
     loadMessages: async (conversationId) => {
@@ -498,6 +523,7 @@ export const useSession = create<SessionState>((set, get) => {
     loadGroups: async () => {
       const groups = await groupsApi.getMyGroups();
       set({ groups });
+      markLoaded('groups');
     },
 
     joinGroup: async (code) => {

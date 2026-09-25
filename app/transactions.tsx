@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, RefreshControl, View } from 'react-native';
 
-import { EmptyState, Screen, SegmentedControl, TransactionRow } from '../src/components';
+import { EmptyState, Screen, SegmentedControl, TransactionListSkeleton, TransactionRow } from '../src/components';
 import { styles } from '../src/screens/transactions.styles';
 import { useSession } from '../src/stores/session';
 
@@ -22,6 +22,7 @@ export default function TransactionsScreen() {
   const loadTransactions = useSession((s) => s.loadTransactions);
   const loadConversations = useSession((s) => s.loadConversations);
   const showError = useSession((s) => s.showError);
+  const loaded = useSession((s) => s.loaded.transactions);
   const [tab, setTab] = useState<'active' | 'past'>('active');
   const [refreshing, setRefreshing] = useState(false);
 
@@ -97,7 +98,11 @@ export default function TransactionsScreen() {
           />
         )}
         ListEmptyComponent={
-          <EmptyState icon="swap-horizontal" title={t('transactions.empty')} body={t('transactions.emptyBody')} />
+          loaded ? (
+            <EmptyState icon="swap-horizontal" title={t('transactions.empty')} body={t('transactions.emptyBody')} />
+          ) : (
+            <TransactionListSkeleton />
+          )
         }
       />
     </Screen>
