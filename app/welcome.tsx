@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
         </Animated.View>
         <Animated.View entering={FadeInUp.delay(200).duration(500)}>
           <AppText variant="display" style={styles.title}>
-            NeighborLend
+            StreetShelf
           </AppText>
           <AppText variant="title" style={styles.tagline}>
             {t('welcome.tagline')}

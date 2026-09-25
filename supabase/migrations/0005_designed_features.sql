@@ -1,4 +1,4 @@
--- NeighborLend — backing for the features the UI already has
+-- StreetShelf — backing for the features the UI already has
 --
 -- The screens were designed ahead of the schema. This migration brings the
 -- database up to what they show, so wiring the app is a data-source swap and

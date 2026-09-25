@@ -4,7 +4,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 
 # What this is
 
-NeighborLend: a hyper-local sharing network. Neighbours gift, lend or rent things to each
+StreetShelf: a hyper-local sharing network. Neighbours gift, lend or rent things to each
 other (the 3x2 matrix: GIFT / LEND / RENT × OFFER / WANTED), inside a GPS radius or inside a
 closed invite-code group. The PRD is `docs/PRD.md`; read it before touching a flow.
 
@@ -41,7 +41,7 @@ The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
   back to Welcome. Production needs a real SMTP sender (Supabase's built-in one allows only a
   handful of emails per hour).
 - **Seed** `supabase/seed.sql` mirrors the old mock data, dates relative to today. Accounts:
-  melih@, ayse@, mehmet@, zeynep@, can@, elif@`neighborlend.test`; the code lands in Mailpit,
+  melih@, ayse@, mehmet@, zeynep@, can@, elif@`streetshelf.test`; the code lands in Mailpit,
   http://127.0.0.1:54524. Any other address is a brand-new sign-up.
 - **Types**: `npx supabase gen types typescript --local > src/services/supabase/database.generated.ts`
   after every migration. Nothing hand-written lives in that file.

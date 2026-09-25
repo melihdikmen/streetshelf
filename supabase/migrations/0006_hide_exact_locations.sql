@@ -1,4 +1,4 @@
--- NeighborLend — exact coordinates never leave the database
+-- StreetShelf — exact coordinates never leave the database
 --
 -- RLS decides which *rows* a user sees; it says nothing about *columns*. With
 -- the table-wide grant from 0002, any signed-in user could read

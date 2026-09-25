@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "NeighborLend",
-    "slug": "neighborlend",
+    "name": "StreetShelf",
+    "slug": "streetshelf",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.melihdikmen.neighborlend",
+      "bundleIdentifier": "com.melihdikmen.streetshelf",
       "infoPlist": {
         "NSCameraUsageDescription": "Teslim ve iade anını fotoğraflamak için kamera gerekir.",
         "NSPhotoLibraryUsageDescription": "İlan fotoğrafı seçmek için galeri erişimi gerekir.",
@@ -23,7 +23,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.melihdikmen.neighborlend",
+      "package": "com.melihdikmen.streetshelf",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION",
@@ -52,7 +52,7 @@
       "expo-build-properties",
       "expo-maps"
     ],
-    "scheme": "neighborlend",
+    "scheme": "streetshelf",
     "experiments": {
       "typedRoutes": true
     }

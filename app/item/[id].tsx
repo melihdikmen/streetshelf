@@ -94,7 +94,7 @@ export default function ItemDetailScreen() {
     ]);
 
   const share = () =>
-    void Share.share({ message: t('share.message', { title: item.title, url: `https://neighborlend.app/i/${item.id}` }) });
+    void Share.share({ message: t('share.message', { title: item.title, url: `https://streetshelf.app/i/${item.id}` }) });
 
   const footer = mine ? (
     <View style={styles.footerRow}>

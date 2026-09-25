@@ -1,5 +1,5 @@
 /**
- * Design tokens for NeighborLend.
+ * Design tokens for StreetShelf.
  *
  * Follows the 60/30/10 rule: a warm off-white canvas carries ~60 % of every
  * screen, deep green-black ink ~30 % (text, primary buttons), and a leaf-green

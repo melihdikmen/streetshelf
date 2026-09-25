@@ -38,7 +38,7 @@ export default function CreateGroupScreen() {
           title={t('groupMore.createdTitle')}
           body={t('groupMore.createdBody')}
           primaryLabel={t('groupMore.share')}
-          onPrimary={() => void Share.share({ message: `${group.name} · NeighborLend davet kodu: ${group.inviteCode}` })}
+          onPrimary={() => void Share.share({ message: t('share.groupInvite', { name: group.name, code: group.inviteCode }) })}
           secondaryLabel={t('common.done')}
           onSecondary={() => router.back()}
         >

@@ -1,4 +1,4 @@
-# NeighborLend
+# StreetShelf
 
 Hyper-local sharing network: gift, lend or rent things to your neighbours, or post what you
 need. Expo SDK 57 + Expo Router on Supabase. PRD in `docs/PRD.md`.
@@ -15,7 +15,7 @@ npm run ios           # dev client build
 npm run db:test       # pgTAP: RLS and transaction flows
 ```
 
-Sign in with melih@neighborlend.test; the code lands in Mailpit at http://127.0.0.1:54524.
+Sign in with melih@streetshelf.test; the code lands in Mailpit at http://127.0.0.1:54524.
 Other accounts are listed in supabase/seed.sql.
 
 ## Layout

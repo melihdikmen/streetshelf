@@ -1,4 +1,4 @@
--- NeighborLend — RPCs
+-- StreetShelf — RPCs
 --
 -- Everything that touches more than one row, or that must not be forged by
 -- a client, is a function here. All are SECURITY DEFINER with an explicit

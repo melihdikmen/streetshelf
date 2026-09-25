@@ -288,7 +288,7 @@ const en: typeof tr = {
     version: 'Version {{version}}',
     deleteAccount: 'Delete account',
     deleteConfirm: 'Your listings, chats and history will be permanently deleted.',
-    deleteNotReady: 'Account deletion in the app is coming soon. For now email destek@neighborlend.app and we will delete it within 30 days.',
+    deleteNotReady: 'Account deletion in the app is coming soon. For now email destek@streetshelf.app and we will delete it within 30 days.',
     signedOut: 'Signed out',
   },
   report: {
@@ -401,7 +401,8 @@ const en: typeof tr = {
   },
   share: {
     item: 'Share',
-    message: '{{title}} — from a neighbour on NeighborLend: {{url}}',
+    message: '{{title}} — from a neighbour on StreetShelf: {{url}}',
+    groupInvite: 'Join {{name}}: open StreetShelf and enter the invite code {{code}}.',
   },
 };
 

@@ -1,4 +1,4 @@
--- NeighborLend — a SYSTEM line remembers what happened
+-- StreetShelf — a SYSTEM line remembers what happened
 --
 -- SYSTEM messages ("Mehmet accepted the request") were rendered from the
 -- transaction's *current* status, so once the item was handed over, the old

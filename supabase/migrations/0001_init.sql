@@ -1,4 +1,4 @@
--- NeighborLend — schema
+-- StreetShelf — schema
 --
 -- One table per PRD noun. The 3x2 matrix (GIFT/LEND/RENT × OFFER/WANTED)
 -- lives on `items`; the lifecycle of a single handover lives on

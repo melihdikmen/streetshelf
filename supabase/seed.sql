@@ -4,12 +4,12 @@
 -- mock to Supabase. Dates are relative to today so the seed never goes stale.
 --
 -- Sign in by email; the 6-digit code arrives in Mailpit, http://127.0.0.1:54524.
---   melih@neighborlend.test   Melih (the main account)
---   ayse@neighborlend.test    Ayşe K.
---   mehmet@neighborlend.test  Mehmet D.
---   zeynep@neighborlend.test  Zeynep A.
---   can@neighborlend.test     Can Y.
---   elif@neighborlend.test    Elif S.
+--   melih@streetshelf.test   Melih (the main account)
+--   ayse@streetshelf.test    Ayşe K.
+--   mehmet@streetshelf.test  Mehmet D.
+--   zeynep@streetshelf.test  Zeynep A.
+--   can@streetshelf.test     Can Y.
+--   elif@streetshelf.test    Elif S.
 -- Any other address is a brand-new sign-up.
 --
 -- Invite codes: PRK7B2 (Melih is a member), ODTU26 (Melih is not — try joining).
@@ -41,12 +41,12 @@ select
   jsonb_build_object('display_name', u.name, 'onboarded', true),
   false, false, '', '', '', '', '', '', '', ''
 from (values
-  ('a0000000-0000-4000-8000-000000000001'::uuid, 'melih@neighborlend.test', 'Melih',     interval '207 days'),
-  ('a0000000-0000-4000-8000-000000000002'::uuid, 'ayse@neighborlend.test', 'Ayşe K.',   interval '167 days'),
-  ('a0000000-0000-4000-8000-000000000003'::uuid, 'mehmet@neighborlend.test', 'Mehmet D.', interval '219 days'),
-  ('a0000000-0000-4000-8000-000000000004'::uuid, 'zeynep@neighborlend.test', 'Zeynep A.', interval '116 days'),
-  ('a0000000-0000-4000-8000-000000000005'::uuid, 'can@neighborlend.test', 'Can Y.',    interval '243 days'),
-  ('a0000000-0000-4000-8000-000000000006'::uuid, 'elif@neighborlend.test', 'Elif S.',   interval '15 days')
+  ('a0000000-0000-4000-8000-000000000001'::uuid, 'melih@streetshelf.test', 'Melih',     interval '207 days'),
+  ('a0000000-0000-4000-8000-000000000002'::uuid, 'ayse@streetshelf.test', 'Ayşe K.',   interval '167 days'),
+  ('a0000000-0000-4000-8000-000000000003'::uuid, 'mehmet@streetshelf.test', 'Mehmet D.', interval '219 days'),
+  ('a0000000-0000-4000-8000-000000000004'::uuid, 'zeynep@streetshelf.test', 'Zeynep A.', interval '116 days'),
+  ('a0000000-0000-4000-8000-000000000005'::uuid, 'can@streetshelf.test', 'Can Y.',    interval '243 days'),
+  ('a0000000-0000-4000-8000-000000000006'::uuid, 'elif@streetshelf.test', 'Elif S.',   interval '15 days')
 ) as u(id, email, name, age);
 
 insert into auth.identities (id, user_id, provider, provider_id, identity_data, created_at, updated_at, last_sign_in_at)

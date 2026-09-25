@@ -1,4 +1,4 @@
--- NeighborLend — reserved listings stay visible, but last and labelled
+-- StreetShelf — reserved listings stay visible, but last and labelled
 --
 -- A LEND or RENT listing with an accepted handover is RESERVED: it takes no
 -- new requests, yet it is coming back. Hiding it would make the street look

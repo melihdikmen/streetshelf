@@ -1,4 +1,4 @@
-# Local development stack for NeighborLend. Ports are the Supabase defaults
+# Local development stack for StreetShelf. Ports are the Supabase defaults
 # shifted by +200 (54521 rather than 54321) so this project can run next to
 # Vouch (+100) and any project holding the defaults.
 
@@ -6,7 +6,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "neighborlend"
+project_id = "streetshelf"
 
 [api]
 enabled = true
@@ -250,11 +250,11 @@ otp_expiry = 3600
 # "confirmation" email and a returning one the "magic_link" email; both carry
 # the code. Locally the mail lands in Mailpit (http://127.0.0.1:54524).
 [auth.email.template.confirmation]
-subject = "NeighborLend giriş kodun"
+subject = "StreetShelf giriş kodun"
 content_path = "./supabase/templates/otp.html"
 
 [auth.email.template.magic_link]
-subject = "NeighborLend giriş kodun"
+subject = "StreetShelf giriş kodun"
 content_path = "./supabase/templates/otp.html"
 
 # Uncomment to customize email template

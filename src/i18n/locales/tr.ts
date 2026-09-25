@@ -285,7 +285,7 @@ const tr = {
     version: 'Sürüm {{version}}',
     deleteAccount: 'Hesabı sil',
     deleteConfirm: 'İlanların, sohbetlerin ve işlem geçmişin kalıcı olarak silinir.',
-    deleteNotReady: 'Hesap silme yakında uygulamadan yapılabilecek. Şimdilik destek@neighborlend.app adresine yaz, 30 gün içinde sileriz.',
+    deleteNotReady: 'Hesap silme yakında uygulamadan yapılabilecek. Şimdilik destek@streetshelf.app adresine yaz, 30 gün içinde sileriz.',
     signedOut: 'Çıkış yapıldı',
   },
   report: {
@@ -398,7 +398,8 @@ const tr = {
   },
   share: {
     item: 'Paylaş',
-    message: '{{title}} — NeighborLend\u2019de komşundan: {{url}}',
+    message: '{{title}} — StreetShelf\u2019de komşundan: {{url}}',
+    groupInvite: '{{name}} grubuna katıl: StreetShelf\u2019i aç ve {{code}} davet kodunu gir.',
   },
 };
 

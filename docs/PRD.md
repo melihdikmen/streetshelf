@@ -1,4 +1,4 @@
-# NeighborLend — PRD v3.1 (MVP)
+# StreetShelf — PRD v3.1 (MVP)
 
 v3.0'ın üzerine, geliştirmeye başlamadan önce kapatılması gereken boşluklar eklendi.
 Değişen/eklenen bölümler **[v3.1]** ile işaretli.
@@ -131,7 +131,7 @@ ister (ödeme sağlayıcı seçimi, komisyon oranı, puanlama kuralları).
 6. **Müsaitlik takvimi** — Sahip için aylık takvim (`availability/[itemId]`): kapalı
    günler (siyah), rezerve günler (yeşil, kilitli), geçmiş günler pasif. İstek ekranındaki
    tarih şeridi bu günleri seçilemez gösterir ve aralık kapalı günün üzerinden atlayamaz.
-7. **Paylaşım** — İlan detayında paylaş butonu; `https://neighborlend.app/i/<id>` bağlantısı
+7. **Paylaşım** — İlan detayında paylaş butonu; `https://streetshelf.app/i/<id>` bağlantısı
    (web sayfası ayrı iş).
 
 ## 9. Veri modeli

@@ -1,4 +1,4 @@
--- NeighborLend — storage buckets
+-- StreetShelf — storage buckets
 --
 --   item-images      public   listing photos; anyone with the URL can view.
 --   avatars          public   profile pictures.

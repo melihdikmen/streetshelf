@@ -1,5 +1,5 @@
 /**
- * Domain types for NeighborLend, mirroring the Supabase schema in
+ * Domain types for StreetShelf, mirroring the Supabase schema in
  * `supabase/migrations/0001_init.sql`. Kept hand-written and small so the UI
  * can be built against mock data before the backend is wired.
  */

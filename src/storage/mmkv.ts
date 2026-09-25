@@ -3,8 +3,8 @@ import { getItem, setItem } from 'expo-secure-store';
 import { createMMKV } from 'react-native-mmkv';
 
 /** Where the store's encryption key lives: Keychain on iOS, Keystore on Android. */
-const KEY_NAME = 'neighborlend.storage-key';
-const STORE_ID = 'neighborlend-secure';
+const KEY_NAME = 'streetshelf.storage-key';
+const STORE_ID = 'streetshelf-secure';
 const KEY_BYTES = 32;
 
 /**

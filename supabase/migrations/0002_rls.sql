@@ -1,4 +1,4 @@
--- NeighborLend — row level security
+-- StreetShelf — row level security
 --
 -- The anon key ships inside the app, so these policies are the only thing
 -- between one neighbour's data and another's. Shapes of access:

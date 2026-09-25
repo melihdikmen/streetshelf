@@ -76,7 +76,7 @@ export default function GroupDetailScreen() {
           <Pressable
             accessibilityRole="button"
             style={[styles.iconButton, styles.iconButtonAccent]}
-            onPress={() => void Share.share({ message: `${group.name} · NeighborLend davet kodu: ${group.inviteCode}` })}
+            onPress={() => void Share.share({ message: t('share.groupInvite', { name: group.name, code: group.inviteCode }) })}
           >
             <MaterialCommunityIcons name="share-variant" size={22} color={colors.textOnDark} />
           </Pressable>

@@ -73,7 +73,7 @@ export function AnimatedSplash({ onReady, onFinish }: AnimatedSplashProps) {
         </Animated.View>
       </View>
       <Animated.View style={[styles.wordmark, wordStyle]}>
-        <AppText variant="title">NeighborLend</AppText>
+        <AppText variant="title">StreetShelf</AppText>
       </Animated.View>
     </Animated.View>
   );
