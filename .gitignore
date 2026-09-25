@@ -39,3 +39,12 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local env files — only the example is shared
+.env
+.env.*
+!.env.example
+
+# generated native folders
+/ios
+/android

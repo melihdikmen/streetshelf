@@ -1,25 +1,60 @@
 {
   "expo": {
-    "name": "neighborlend",
+    "name": "NeighborLend",
     "slug": "neighborlend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.melihdikmen.neighborlend",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Teslim ve iade anını fotoğraflamak için kamera gerekir.",
+        "NSPhotoLibraryUsageDescription": "İlan fotoğrafı seçmek için galeri erişimi gerekir.",
+        "NSLocationWhenInUseUsageDescription": "Yakınındaki ilanları göstermek için konumun kullanılır."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#2E7D4F",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.melihdikmen.neighborlend",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 96,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F5F0"
+        }
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-image",
+      "expo-localization",
+      "@react-native-community/datetimepicker",
+      "expo-build-properties",
+      "expo-maps"
+    ],
+    "scheme": "neighborlend",
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
