@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
+import { Image, useImage } from 'expo-image';
 import { AppleMaps, GoogleMaps } from 'expo-maps';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -19,6 +19,7 @@ import {
 } from '../../src/components';
 import { styles } from '../../src/screens/tabs/index.styles';
 import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
+import { mapsAvailable } from '../../src/services/maps';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
 import type { Item, ItemType, RequestType } from '../../src/types/domain';
@@ -49,7 +50,7 @@ export default function DiscoverScreen() {
   const [mode, setMode] = useState<ModeFilter>('ALL');
   const [groupId, setGroupId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [view, setView] = useState<'list' | 'map'>(initialView === 'map' ? 'map' : 'list');
+  const [view, setView] = useState<'list' | 'map'>(initialView === 'map' && mapsAvailable() ? 'map' : 'list');
   const [focused, setFocused] = useState<Item | null>(null);
 
   // Filtering happens in the database (radius, direction, mode, group); the
@@ -115,6 +116,7 @@ export default function DiscoverScreen() {
             <Pressable accessibilityRole="button" onPress={() => router.push('/search')} style={styles.iconButton}>
               <MaterialCommunityIcons name="magnify" size={22} color={colors.text} />
             </Pressable>
+            {mapsAvailable() ? (
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={view === 'list' ? t('map.map') : t('map.list')}
@@ -123,6 +125,7 @@ export default function DiscoverScreen() {
             >
               <MaterialCommunityIcons name={view === 'list' ? 'map-outline' : 'view-grid-outline'} size={22} color={view === 'map' ? colors.textOnDark : colors.text} />
             </Pressable>
+            ) : null}
           </View>
         </View>
 
@@ -185,6 +188,12 @@ export default function DiscoverScreen() {
 }
 
 const MARKER_TINT: Record<ItemType, string> = { GIFT: colors.gift, LEND: colors.lend, RENT: colors.rent };
+/** SF Symbols for the Apple Maps balloons, matching the Android pin icons. */
+const MARKER_SYMBOL: Record<ItemType, string> = {
+  GIFT: 'gift.fill',
+  LEND: 'arrow.left.arrow.right',
+  RENT: 'tag.fill',
+};
 const DEFAULT_CENTER = { latitude: 39.8676, longitude: 32.8386 };
 /**
  * Hard ceiling on pins sent to the native map. Past this the bridge payload
@@ -218,17 +227,36 @@ const MapView = memo(function MapView({ items, focused, onFocus, onOpen }: MapVi
   const overflow = items.length > MAX_PINS;
   const pinsById = useMemo(() => new Map(pins.map((item) => [item.id, item])), [pins]);
 
-  const markers = useMemo(
+  // Google Maps ignores tint colours, so Android pins are images: a round
+  // badge in the mode colour with the mode's icon (assets/markers/*.png,
+  // drawn to match the app's badges). Loaded once; null until decoded.
+  const giftPin = useImage(require('../../assets/markers/gift.png'));
+  const lendPin = useImage(require('../../assets/markers/lend.png'));
+  const rentPin = useImage(require('../../assets/markers/rent.png'));
+
+  // No titles on the pins: the tapped listing opens in the card below, and a
+  // label under every pin made the map unreadable.
+  const appleMarkers = useMemo(
     () =>
       pins.map((item) => ({
         id: item.id,
         coordinates: item.approxLocation as { latitude: number; longitude: number },
-        title: item.title,
-        // Reserved pins go grey so the available ones stand out.
-        tintColor: item.status === 'RESERVED' ? colors.textSubtle : MARKER_TINT[item.itemType],
+        systemImage: MARKER_SYMBOL[item.itemType],
+        tintColor: MARKER_TINT[item.itemType],
       })),
     [pins],
   );
+  const googleMarkers = useMemo(() => {
+    const icons: Record<ItemType, typeof giftPin> = { GIFT: giftPin, LEND: lendPin, RENT: rentPin };
+    return pins.map((item) => ({
+      id: item.id,
+      coordinates: item.approxLocation as { latitude: number; longitude: number },
+      icon: icons[item.itemType] ?? undefined,
+      // The tail's tip, not the badge's centre, marks the spot.
+      anchor: { x: 0.5, y: 1 },
+      showCallout: false,
+    }));
+  }, [giftPin, lendPin, pins, rentPin]);
 
   // Captured once: a camera prop that changes with the filters would recentre
   // the map under the user's finger.
@@ -246,9 +274,9 @@ const MapView = memo(function MapView({ items, focused, onFocus, onOpen }: MapVi
   return (
     <View style={styles.map}>
       {Platform.OS === 'ios' ? (
-        <AppleMaps.View style={styles.mapFill} cameraPosition={cameraPosition} markers={markers} onMarkerClick={onMarkerClick} onMapClick={onMapClick} />
+        <AppleMaps.View style={styles.mapFill} cameraPosition={cameraPosition} markers={appleMarkers} onMarkerClick={onMarkerClick} onMapClick={onMapClick} />
       ) : (
-        <GoogleMaps.View style={styles.mapFill} cameraPosition={cameraPosition} markers={markers} onMarkerClick={onMarkerClick} onMapClick={onMapClick} />
+        <GoogleMaps.View style={styles.mapFill} cameraPosition={cameraPosition} markers={googleMarkers} onMarkerClick={onMarkerClick} onMapClick={onMapClick} />
       )}
       <View style={styles.mapNote} pointerEvents="none">
         <MaterialCommunityIcons name={overflow ? 'magnify-plus-outline' : 'shield-half-full'} size={14} color={colors.textMuted} />
