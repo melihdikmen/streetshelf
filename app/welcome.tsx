@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '../src/components';
 import { styles } from '../src/screens/welcome.styles';
+import { devSignInAvailable } from '../src/dev/mailpit';
 import { colors } from '../src/theme/tokens';
 
 /**
@@ -61,6 +62,9 @@ export default function WelcomeScreen() {
         <AppText variant="caption" tone="subtle" style={styles.legal}>
           {t('welcome.legal')}
         </AppText>
+        {devSignInAvailable() ? (
+          <Button label={t('dev.testAccounts')} variant="ghost" icon="flask-outline" onPress={() => router.push('/auth/dev-accounts')} />
+        ) : null}
       </View>
     </SafeAreaView>
   );

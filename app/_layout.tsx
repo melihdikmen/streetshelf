@@ -100,6 +100,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="welcome" options={{ headerShown: false }} />
           <Stack.Screen name="auth/email" options={{ title: '' }} />
+          <Stack.Screen name="auth/dev-accounts" options={{ title: t('dev.testAccounts'), presentation: 'modal' }} />
           <Stack.Screen name="auth/otp" options={{ title: '' }} />
           <Stack.Screen name="auth/profile" options={{ title: '', headerBackVisible: false, gestureEnabled: false }} />
           <Stack.Screen name="auth/location" options={{ title: '' }} />
