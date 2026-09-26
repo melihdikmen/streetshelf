@@ -107,5 +107,14 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.rentTint,
   },
   reservedText: { color: colors.rent },
+  holder: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    backgroundColor: colors.rentTint,
+  },
+  holderText: { flex: 1, gap: 2 },
   bannerText: { flex: 1 },
 });

@@ -406,6 +406,28 @@ const tr = {
     offline: 'İnternet bağlantısı yok',
     back: 'Tekrar çevrimiçisin',
   },
+  holder: {
+    awaitingHandover: 'Teslim bekleniyor',
+    lentOut: 'Şu an ödünçte',
+    rentedOut: 'Şu an kirada',
+    withYou: 'Şu an sende',
+    toCollect: 'Teslim alacaksın',
+    returnOn: 'İade {{date}}',
+  },
+  dev: {
+    testAccounts: 'Test hesapları',
+    accountsBody: 'Sadece geliştirme sürümünde görünür. Bir hesaba dokun; kod lokal posta kutusundan otomatik okunur ve giriş yapılır.',
+    accountsFooter: 'Hesaplar supabase/seed.sql içindeki demo verisidir. Listede olmayan bir adresle giriş yapmak için Welcome ekranındaki normal akışı kullan.',
+    openInbox: 'Posta kutusunu aç (Mailpit)',
+    notes: {
+      melih: 'Ana hesap: ilanlar, gruplar, açık işlemler',
+      ayse: 'Melih\u2019in masa tenisi setine istek göndermiş',
+      mehmet: 'Melih\u2019in kiraladığı matkabın sahibi',
+      zeynep: 'Park Oran B Blok üyesi',
+      can: 'Projeksiyonun sahibi, ODTÜ Kampüs yöneticisi',
+      elif: 'Melih\u2019teki merdivenin sahibi',
+    },
+  },
 };
 
 export default tr;

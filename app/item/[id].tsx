@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, Share, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import { AppText, Avatar, Button, ItemDetailSkeleton, ModeBadge, Screen, StarRat
 import { styles } from '../../src/screens/item/[id].styles';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
+import type { ItemType, Profile, Transaction } from '../../src/types/domain';
 import { formatDistance, formatReserved, formatShortDate } from '../../src/utils/format';
 
 /**
@@ -41,10 +42,20 @@ export default function ItemDetailScreen() {
     loadItem(id).catch(showError);
   }, [id, loadItem, showError]);
 
-  const isMine = item?.owner.id === me.id;
+  // Loaded for everyone: RLS returns only the viewer's own transactions, so a
+  // third party gets nothing, while the owner and the borrower get the live
+  // handover that tells them where the item is.
   useEffect(() => {
-    if (isMine) loadTransactions().catch(() => undefined);
-  }, [isMine, loadTransactions]);
+    loadTransactions().catch(() => undefined);
+  }, [id, loadTransactions]);
+
+  const profiles = useSession((s) => s.profiles);
+  const conversations = useSession((s) => s.conversations);
+  /** The accepted or ongoing handover of this item that the viewer is part of. */
+  const liveTx = useMemo(
+    () => transactions.find((tx) => tx.itemId === id && (tx.status === 'ACCEPTED' || tx.status === 'DELIVERED')),
+    [id, transactions],
+  );
 
   if (!item) {
     return (
@@ -169,7 +180,19 @@ export default function ItemDetailScreen() {
               </AppText>
             </View>
           ) : null}
-          {item.status === 'RESERVED' ? (
+          {liveTx ? (
+            <HolderCard
+              tx={liveTx}
+              itemType={item.itemType}
+              viewerIsOwner={liveTx.ownerId === me.id}
+              other={profiles[liveTx.ownerId === me.id ? liveTx.borrowerId : liveTx.ownerId]}
+              conversationId={
+                conversations.find(
+                  (c) => c.item.id === item.id && c.other.id === (liveTx.ownerId === me.id ? liveTx.borrowerId : liveTx.ownerId),
+                )?.id
+              }
+            />
+          ) : item.status === 'RESERVED' ? (
             <View style={styles.reservedBanner}>
               <MaterialCommunityIcons name="lock-clock" size={18} color={colors.rent} />
               <AppText variant="captionBold" style={[styles.bannerText, styles.reservedText]}>
@@ -245,5 +268,63 @@ export default function ItemDetailScreen() {
         </View>
       </ScrollView>
     </Screen>
+  );
+}
+
+interface HolderCardProps {
+  tx: Transaction;
+  itemType: ItemType;
+  viewerIsOwner: boolean;
+  other: Profile | undefined;
+  conversationId: string | undefined;
+}
+
+/**
+ * Where the item is right now, for the two people in the handover: waiting
+ * to be handed over, or with the borrower until the return date. Tapping it
+ * opens their chat, where the next step (photo, return) happens.
+ */
+function HolderCard({ tx, itemType, viewerIsOwner, other, conversationId }: HolderCardProps) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const delivered = tx.status === 'DELIVERED';
+
+  const title = viewerIsOwner
+    ? delivered
+      ? itemType === 'RENT'
+        ? t('holder.rentedOut')
+        : t('holder.lentOut')
+      : t('holder.awaitingHandover')
+    : delivered
+      ? t('holder.withYou')
+      : t('holder.toCollect');
+
+  const dates = delivered && itemType !== 'GIFT'
+    ? t('holder.returnOn', { date: formatShortDate(tx.endDate) })
+    : tx.startDate === tx.endDate
+      ? formatShortDate(tx.startDate)
+      : `${formatShortDate(tx.startDate)} – ${formatShortDate(tx.endDate)}`;
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      disabled={!conversationId}
+      onPress={() => conversationId && router.push({ pathname: '/chat/[id]', params: { id: conversationId } })}
+      style={styles.holder}
+    >
+      <Avatar name={other?.displayName ?? '…'} uri={other?.avatarUrl} size={40} />
+      <View style={styles.holderText}>
+        <AppText variant="captionBold" style={styles.reservedText}>
+          {title}
+        </AppText>
+        <AppText variant="bodyBold" numberOfLines={1}>
+          {other?.displayName ?? '…'}
+        </AppText>
+        <AppText variant="caption" tone="muted">
+          {dates}
+        </AppText>
+      </View>
+      {conversationId ? <MaterialCommunityIcons name="message-text-outline" size={22} color={colors.textMuted} /> : null}
+    </Pressable>
   );
 }

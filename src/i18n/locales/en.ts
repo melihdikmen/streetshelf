@@ -409,6 +409,28 @@ const en: typeof tr = {
     offline: 'No internet connection',
     back: 'Back online',
   },
+  holder: {
+    awaitingHandover: 'Waiting for handover',
+    lentOut: 'Lent out right now',
+    rentedOut: 'Rented out right now',
+    withYou: 'With you right now',
+    toCollect: 'You are collecting this',
+    returnOn: 'Return {{date}}',
+  },
+  dev: {
+    testAccounts: 'Test accounts',
+    accountsBody: 'Development builds only. Tap an account; the code is read from the local inbox and you are signed in.',
+    accountsFooter: 'These are the demo accounts from supabase/seed.sql. To sign in with any other address, use the normal flow on Welcome.',
+    openInbox: 'Open the inbox (Mailpit)',
+    notes: {
+      melih: 'Main account: listings, groups, open handovers',
+      ayse: 'Asked for Melih\u2019s table tennis set',
+      mehmet: 'Owns the drill Melih is renting',
+      zeynep: 'Member of Park Oran B Blok',
+      can: 'Owns the projector; admin of ODTÜ Kampüs',
+      elif: 'Lent Melih the ladder',
+    },
+  },
 };
 
 export default en;
