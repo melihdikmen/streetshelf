@@ -89,9 +89,6 @@ export default function UserProfileScreen() {
         <AppText variant="caption" tone="muted">
           {[user.area, since ? t('user.since', { year: since }) : null].filter(Boolean).join(' · ')}
         </AppText>
-        {user.id !== me.id ? (
-          <Button label={t('user.message')} variant="secondary" icon="message-text-outline" onPress={() => router.back()} />
-        ) : null}
       </View>
 
       <AppText variant="title" style={styles.sectionTitle}>

@@ -277,6 +277,7 @@ const tr = {
     notifications: 'Bildirimler',
     notificationsHint: 'İstek, onay ve mesajlar',
     radius: 'Varsayılan mesafe',
+    radiusBody: 'Keşfet ekranı açıldığında bu mesafe içindeki ilanlar gösterilir. Keşfet\u2019teki mesafe düğmesiyle de değiştirebilirsin.',
     privacy: 'Gizlilik',
     blocked: 'Engellenenler',
     blockedCount: '{{count}} kişi',
@@ -427,6 +428,14 @@ const tr = {
       can: 'Projeksiyonun sahibi, ODTÜ Kampüs yöneticisi',
       elif: 'Melih\u2019teki merdivenin sahibi',
     },
+  },
+  blocked: {
+    emptyTitle: 'Kimseyi engellemedin',
+    emptyBody: 'Bir profilden ya da sohbetten engellediğin kişiler burada görünür.',
+    unblock: 'Engeli kaldır',
+    unblockTitle: '{{name}} için engeli kaldır?',
+    unblockBody: 'İlanlarını yeniden görürsün ve sana mesaj atabilir.',
+    unblocked: '{{name}} için engel kaldırıldı',
   },
 };
 

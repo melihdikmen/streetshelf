@@ -280,6 +280,7 @@ const en: typeof tr = {
     notifications: 'Notifications',
     notificationsHint: 'Requests, approvals and messages',
     radius: 'Default distance',
+    radiusBody: 'Discover opens with listings within this distance. You can also change it with the distance button on Discover.',
     privacy: 'Privacy',
     blocked: 'Blocked users',
     blockedCount: '{{count}} people',
@@ -430,6 +431,14 @@ const en: typeof tr = {
       can: 'Owns the projector; admin of ODTÜ Kampüs',
       elif: 'Lent Melih the ladder',
     },
+  },
+  blocked: {
+    emptyTitle: 'You have not blocked anyone',
+    emptyBody: 'People you block from a profile or a chat show up here.',
+    unblock: 'Unblock',
+    unblockTitle: 'Unblock {{name}}?',
+    unblockBody: 'You will see their listings again and they can message you.',
+    unblocked: '{{name}} unblocked',
   },
 };
 

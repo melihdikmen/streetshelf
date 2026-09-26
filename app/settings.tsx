@@ -1,13 +1,11 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Switch, View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import { AppText, Button, Card, ListRow, Screen } from '../src/components';
-import i18n from '../src/i18n';
+import i18n, { setLanguage } from '../src/i18n';
 import { styles } from '../src/screens/settings.styles';
 import { useSession } from '../src/stores/session';
-import { colors } from '../src/theme/tokens';
 
 /** Grouped settings: account, privacy, about. Danger at the very bottom. */
 export default function SettingsScreen() {
@@ -18,11 +16,8 @@ export default function SettingsScreen() {
   const signOut = useSession((s) => s.signOut);
   const showToast = useSession((s) => s.showToast);
   const showError = useSession((s) => s.showError);
-  const [notifications, setNotifications] = useState(true);
-
-  const toggleLanguage = () => {
-    void i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr');
-  };
+  // Two languages, so a tap flips between them; saved across launches.
+  const toggleLanguage = () => setLanguage(i18n.language === 'tr' ? 'en' : 'tr');
 
   const doSignOut = async () => {
     try {
@@ -43,23 +38,13 @@ export default function SettingsScreen() {
     <Screen scroll edges={['left', 'right']}>
       <Section title={t('settings.account')}>
         <ListRow icon="translate" label={t('settings.language')} value={i18n.language === 'tr' ? 'Türkçe' : 'English'} onPress={toggleLanguage} />
-        <ListRow
-          icon="bell-outline"
-          label={t('settings.notifications')}
-          hint={t('settings.notificationsHint')}
-          trailing={
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              trackColor={{ true: colors.accent, false: colors.disabled }}
-            />
-          }
-        />
-        <ListRow icon="map-marker-radius-outline" label={t('settings.radius')} value={radius < 1000 ? `${radius} m` : `${radius / 1000} km`} onPress={() => undefined} />
+        {/* Notification settings return with push (AGENTS.md, Phase 3); a
+            switch that controlled nothing was worse than none. */}
+        <ListRow icon="map-marker-radius-outline" label={t('settings.radius')} value={radius < 1000 ? `${radius} m` : `${radius / 1000} km`} onPress={() => router.push('/radius')} />
       </Section>
 
       <Section title={t('settings.privacy')}>
-        <ListRow icon="account-cancel-outline" label={t('settings.blocked')} value={t('settings.blockedCount', { count: blocked.length })} onPress={() => undefined} />
+        <ListRow icon="account-cancel-outline" label={t('settings.blocked')} value={t('settings.blockedCount', { count: blocked.length })} onPress={() => router.push('/blocked')} />
       </Section>
 
       <Section title={t('settings.about')}>
@@ -81,7 +66,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <View style={styles.section}>
       <AppText variant="captionBold" tone="muted" style={styles.sectionTitle}>
-        {title.toUpperCase()}
+        {title.toLocaleUpperCase(i18n.language === 'tr' ? 'tr-TR' : 'en-GB')}
       </AppText>
       <Card padded={false}>{children}</Card>
     </View>

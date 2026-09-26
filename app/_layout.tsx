@@ -110,6 +110,8 @@ export default function RootLayout() {
           <Stack.Screen name="search" options={{ headerShown: false }} />
           <Stack.Screen name="transactions" options={{ title: t('transactions.title') }} />
           <Stack.Screen name="settings" options={{ title: t('settings.title') }} />
+          <Stack.Screen name="blocked" options={{ title: t('settings.blocked') }} />
+          <Stack.Screen name="radius" options={{ title: t('settings.radius'), presentation: 'modal' }} />
           <Stack.Screen name="group/[id]" options={{ title: '' }} />
           <Stack.Screen name="user/[id]" options={{ title: '' }} />
           <Stack.Screen name="reviews/[userId]" options={{ title: t('review.listTitle') }} />

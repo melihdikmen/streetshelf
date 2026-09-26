@@ -165,6 +165,9 @@ interface SessionState {
   loadReviewsFor: (userId: string) => Promise<void>;
   addReview: (review: NewReview) => Promise<void>;
   blockUser: (userId: string) => Promise<void>;
+  /** Refreshes the block list and the profiles needed to show it. */
+  loadBlocked: () => Promise<void>;
+  unblockUser: (userId: string) => Promise<void>;
   report: (input: ReportInput) => Promise<void>;
   rememberSearch: (query: string) => void;
 }
@@ -577,6 +580,19 @@ export const useSession = create<SessionState>((set, get) => {
         blockedUserIds: [...new Set([...state.blockedUserIds, userId])],
         items: state.items.filter((i) => i.owner.id !== userId),
       }));
+    },
+
+    loadBlocked: async () => {
+      const blockedUserIds = await safetyApi.getBlockedIds();
+      await ensureProfiles(blockedUserIds);
+      set({ blockedUserIds });
+    },
+
+    unblockUser: async (userId) => {
+      const me = get().userId;
+      if (!me) return;
+      await safetyApi.unblockUser(me, userId);
+      set((state) => ({ blockedUserIds: state.blockedUserIds.filter((id) => id !== userId) }));
     },
 
     report: async (input) => {

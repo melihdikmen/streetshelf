@@ -11,6 +11,12 @@ export async function blockUser(blockerId: string, blockedId: string): Promise<v
   if (error) throw toAppError(error);
 }
 
+/** Lifts a block the caller placed. RLS ("blocks: own") limits it to their own rows. */
+export async function unblockUser(blockerId: string, blockedId: string): Promise<void> {
+  const { error } = await supabase.from('blocks').delete().eq('blocker_id', blockerId).eq('blocked_id', blockedId);
+  if (error) throw toAppError(error);
+}
+
 export interface ReportInput {
   itemId?: string;
   userId?: string;
