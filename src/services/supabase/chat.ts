@@ -6,6 +6,20 @@ import { toAppError, unwrap } from './errors';
 import { toMessage, type MessageRow } from './mappers';
 import { signedHandoverUrls } from './storage';
 
+/**
+ * A fresh channel name for every subscription.
+ *
+ * `supabase.channel(name)` returns the existing channel when one with that
+ * name is still registered, and `removeChannel` is asynchronous. So when a
+ * screen remounts (fast refresh, sign-out and back in, navigating away and
+ * back quickly) the old channel is often still there, already subscribed, and
+ * adding listeners to it throws "cannot add postgres_changes callbacks after
+ * subscribe()". The name is only a label; the filter decides what arrives.
+ */
+function uniqueTopic(base: string): string {
+  return `${base}:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+}
+
 const MESSAGE_COLUMNS = 'id, conversation_id, sender_id, kind, body, transaction_id, photo_path, created_at';
 
 export interface ConversationSummary {
@@ -91,7 +105,7 @@ export function subscribeToThread(
   handlers: { onMessage: (row: MessageRow) => void; onTransaction: (id: string) => void },
 ): () => void {
   const channel: RealtimeChannel = supabase
-    .channel(`thread:${conversationId}`)
+    .channel(uniqueTopic(`thread:${conversationId}`))
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` },
@@ -114,7 +128,7 @@ export function subscribeToThread(
  */
 export function subscribeToInbox(onMessage: () => void): () => void {
   const channel = supabase
-    .channel('inbox')
+    .channel(uniqueTopic('inbox'))
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => onMessage())
     .subscribe();
   return () => {
