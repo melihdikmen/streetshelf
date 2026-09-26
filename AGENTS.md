@@ -28,9 +28,10 @@ screenshot it in the simulator, then connect it to the store.
 
 The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
 
-- **Migrations** `0001`–`0008`: schema, RLS, RPCs, storage, the designed features (multi-group
+- **Migrations** `0001`–`0009`: schema, RLS, RPCs, storage, the designed features (multi-group
   `item_groups`, closed days, reviews, read markers, fuzzed pins), column-level grants that hide
-  exact coordinates (`0006`), a trigger that freezes what a SYSTEM line says (`0007`), and reserved listings that stay visible but sort last with a `reserved_until` date (`0008`). Never
+  exact coordinates (`0006`), a trigger that freezes what a SYSTEM line says (`0007`), `reserved_until` for reserved listings (`0008`), and lent-out or rented-out listings leaving
+  every feed until they are returned (`0009`, reversing 0008's "keep them visible"). Never
   edit an applied migration; add the next number.
 - **Tests**: `npm run db:test` runs `supabase/tests/*.test.sql` (pgTAP) against the seed, each
   sensitive rule with a NEGATIVE case. Add one whenever a policy or RPC changes.

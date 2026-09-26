@@ -48,7 +48,7 @@ export default function UserProfileScreen() {
   }, [id, loadProfile, loadReviewsFor, loadUserItems, showError]);
 
   const items = useMemo(
-    () => (userItems ?? []).filter((i) => i.requestType === 'OFFER' && (i.status === 'ACTIVE' || i.status === 'RESERVED')),
+    () => (userItems ?? []).filter((i) => i.requestType === 'OFFER' && (i.status === 'ACTIVE' || (i.status === 'RESERVED' && i.owner.id === me.id))),
     [userItems],
   );
   const reviews = useMemo(() => allReviews.filter((r) => r.toId === id), [allReviews, id]);

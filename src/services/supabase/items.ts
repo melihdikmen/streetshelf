@@ -133,7 +133,7 @@ export async function searchItems(query: string, origin: Origin | null, excludeO
       .from('items')
       .select('id')
       .or(`title.ilike.%${term}%,description.ilike.%${term}%`)
-      .in('status', ['ACTIVE', 'RESERVED'])
+      .eq('status', 'ACTIVE')
       .neq('owner_id', excludeOwnerId)
       .order('created_at', { ascending: false })
       .limit(40),

@@ -41,7 +41,7 @@ Durumlar: `PENDING → ACCEPTED → DELIVERED → RETURNED`; yan çıkışlar `R
 | Adım | Kim | Ne olur |
 |------|-----|---------|
 | İstek | başlatan | `PENDING`, sohbete REQUEST kartı düşer |
-| Onay | diğer taraf | `ACCEPTED`, ilan `RESERVED` olur |
+| Onay | diğer taraf | `ACCEPTED`, ilan `RESERVED` olur ve iade edilene kadar Keşfet, harita, arama, grup ve başkasının profilinde listelenmez |
 | Teslim fotoğrafı | **owner** | `DELIVERED`; GIFT ise ilan `COMPLETED`, akış biter |
 | İade fotoğrafı | **owner** | `RETURNED`; ilan tekrar `ACTIVE` |
 | İptal | iki taraf | `PENDING`/`ACCEPTED` iken; ilan `ACTIVE`'e döner |

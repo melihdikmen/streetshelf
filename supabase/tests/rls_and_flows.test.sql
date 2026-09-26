@@ -28,20 +28,47 @@ $$;
 \set can    '''a0000000-0000-4000-8000-000000000005'''
 \set elif   '''a0000000-0000-4000-8000-000000000006'''
 
+-- -------------------------------------------------------------- baseline --
+
+-- The local database is also where the app is tried by hand, so the seed does
+-- not stay pristine: handovers get completed, reviews get written. Put back
+-- the one state the assertions below rely on (Mehmet's drill accepted for
+-- Melih, not yet handed over), inside this rolled-back transaction, so the
+-- suite passes on a used database and never changes it.
+update transactions
+   set status = 'ACCEPTED', pickup_photo_path = null, return_photo_path = null,
+       delivered_at = null, returned_at = null,
+       start_date = current_date + 2, end_date = current_date + 3
+ where id = 'd0000000-0000-4000-8000-000000000001';
+update items set status = 'RESERVED' where id = 'c0000000-0000-4000-8000-000000000001';
+
+-- Ground truth computed with full rights, before signing anyone in: the
+-- signed-in user is (rightly) not allowed to read the location column.
+create temp table expected as
+select count(*)::int as nearby_offers
+from items i
+where i.request_type = 'OFFER' and i.status = 'ACTIVE' and not i.is_group_only
+  and i.owner_id <> 'a0000000-0000-4000-8000-000000000001'
+  and extensions.st_dwithin(
+    i.location,
+    extensions.st_setsrid(extensions.st_makepoint(32.8386, 39.8676), 4326)::extensions.geography,
+    1000);
+grant select on expected to authenticated;
+
 -- ------------------------------------------------------------- discovery --
 
 select pg_temp.login(:melih);
 
 select is(
   (select count(*)::int from nearby_items(39.8676, 32.8386, 1000, 'OFFER', null, 50, 0)),
-  5,
-  'nearby OFFER within 1 km: public listings only, own, group-only and out-of-range excluded'
+  (select nearby_offers from expected),
+  'nearby OFFER within 1 km: available public listings only; own, group-only, lent/rented-out and out-of-range excluded'
 );
 
 select is(
   (select distance_m from nearby_items(39.8676, 32.8386, 1000, 'OFFER', null, 50, 0)
-   where id = 'c0000000-0000-4000-8000-000000000001'),
-  250,
+   where id = 'c0000000-0000-4000-8000-000000000002'),
+  400,
   'distance is rounded to 50 m and matches the mock'
 );
 
@@ -51,21 +78,20 @@ select ok(
 );
 
 select is(
-  (select array_agg(status::text) from nearby_items(39.8676, 32.8386, 1000, 'OFFER', null, 50, 0)),
-  array['ACTIVE', 'ACTIVE', 'ACTIVE', 'RESERVED', 'RESERVED'],
-  'reserved listings stay in the feed but sort after available ones'
+  (select count(*)::int from nearby_items(39.8676, 32.8386, 1000, 'OFFER', null, 50, 0) where status <> 'ACTIVE'),
+  0,
+  'NEGATIVE: a lent-out or rented-out listing is not in the feed'
 );
 
 select is(
-  (select reserved_until from nearby_items(39.8676, 32.8386, 1000, 'OFFER', null, 50, 0)
-   where id = 'c0000000-0000-4000-8000-000000000001'),
-  current_date + 3,
-  'a reserved listing says until when it is out'
+  (select reserved_until from item_positions(array['c0000000-0000-4000-8000-000000000001'::uuid], 39.8676, 32.8386)),
+  (select end_date from transactions where id = 'd0000000-0000-4000-8000-000000000001'),
+  'an open reserved listing still says until when it is out'
 );
 
 select is(
   (select count(*)::int from nearby_items(39.8676, 32.8386, 1000, 'OFFER', array['GIFT']::item_type[], 50, 0)),
-  1,
+  (select count(*)::int from nearby_items(39.8676, 32.8386, 1000, 'OFFER', null, 50, 0) where item_type = 'GIFT'),
   'mode filter narrows the feed'
 );
 
@@ -302,19 +328,22 @@ select is(
 
 -- -------------------------------------------------------------- summaries --
 
--- Using the app marks threads read, so pin the markers to the seed's state
--- instead of trusting whatever the local database has been through.
+-- Using the app marks threads read, and the seed's timestamps age, so pin
+-- the markers relative to the messages themselves: Melih has read everything
+-- in Mehmet's thread but the last line, nothing in Ayşe's, all of the rest.
 select pg_temp.logout();
 delete from conversation_reads where user_id = :melih;
 insert into conversation_reads (conversation_id, user_id, last_read_at) values
-  ('e0000000-0000-4000-8000-000000000001', :melih, now() - interval '13 hours'),
+  ('e0000000-0000-4000-8000-000000000001', :melih,
+   (select created_at from messages where conversation_id = 'e0000000-0000-4000-8000-000000000001'
+    order by created_at desc offset 1 limit 1)),
   ('e0000000-0000-4000-8000-000000000003', :melih, now()),
   ('e0000000-0000-4000-8000-000000000004', :melih, now());
 
 select pg_temp.login(:melih);
 select is(
   (select rating from profile_summary('a0000000-0000-4000-8000-000000000001')),
-  4.7,
+  (select round(avg(rating)::numeric, 1) from reviews where to_id = 'a0000000-0000-4000-8000-000000000001'),
   'profile rating is the average of received reviews'
 );
 
