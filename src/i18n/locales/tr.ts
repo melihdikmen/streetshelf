@@ -437,6 +437,13 @@ const tr = {
     unblockBody: 'İlanlarını yeniden görürsün ve sana mesaj atabilir.',
     unblocked: '{{name}} için engel kaldırıldı',
   },
+  edit: {
+    title: 'İlanı düzenle',
+    kind: 'İlan türü',
+    kindLocked: 'Tür ve yön değiştirilemez. Farklı bir şey istiyorsan bu ilanı arşivleyip yenisini aç.',
+    save: 'Değişiklikleri kaydet',
+    saved: 'İlan güncellendi',
+  },
 };
 
 export default tr;

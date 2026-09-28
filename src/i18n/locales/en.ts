@@ -440,6 +440,13 @@ const en: typeof tr = {
     unblockBody: 'You will see their listings again and they can message you.',
     unblocked: '{{name}} unblocked',
   },
+  edit: {
+    title: 'Edit listing',
+    kind: 'Listing type',
+    kindLocked: 'The type and direction cannot change. For something different, archive this listing and post a new one.',
+    save: 'Save changes',
+    saved: 'Listing updated',
+  },
 };
 
 export default en;

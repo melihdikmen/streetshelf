@@ -85,6 +85,7 @@ export function toItem(
     title: row.title,
     description: row.description,
     images: row.images.map((path) => publicUrl('item-images', path)).filter((u): u is string => !!u),
+    imagePaths: row.images,
     itemType: row.item_type,
     requestType: row.request_type,
     pricePerDay: row.price_per_day ?? undefined,

@@ -8,7 +8,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(44);
+select plan(48);
 
 -- ----------------------------------------------------------------- helpers --
 
@@ -324,6 +324,37 @@ select is(
   (select count(*)::int from items where id = (select id from made)),
   0,
   'NEGATIVE: a new group-only listing stays inside its group'
+);
+
+-- ---------------------------------------------------------------- editing --
+
+select pg_temp.login(:ayse);
+select throws_ok(
+  $$ select update_item('c0000000-0000-4000-8000-000000000007', 'Benim artık', '', '{}', 1, '{}') $$,
+  'item_not_found',
+  'NEGATIVE: nobody edits someone else''s listing'
+);
+
+select pg_temp.login(:mehmet);
+select throws_ok(
+  $$ select update_item('c0000000-0000-4000-8000-000000000007', 'Halı yıkama', '', '{}', 250,
+                        array['b0000000-0000-4000-8000-000000000002'::uuid]) $$,
+  'not_a_member',
+  'NEGATIVE: a listing cannot be moved into a group the owner is not in'
+);
+
+select lives_ok(
+  $$ select update_item('c0000000-0000-4000-8000-000000000007', '  Halı yıkama makinesi (yeni)  ', 'Deterjan dahil', '{}', 300,
+                        array['b0000000-0000-4000-8000-000000000001'::uuid]) $$,
+  'the owner edits copy, price and visibility'
+);
+
+select is(
+  (select (title, price_per_day, is_group_only,
+           (select count(*)::int from item_groups where item_id = 'c0000000-0000-4000-8000-000000000007'))
+   from items where id = 'c0000000-0000-4000-8000-000000000007'),
+  ('Halı yıkama makinesi (yeni)'::text, 300::numeric, true, 1),
+  'edits land: trimmed title, new price, group-only with one group link'
 );
 
 -- -------------------------------------------------------------- summaries --

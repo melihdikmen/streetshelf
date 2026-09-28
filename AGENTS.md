@@ -28,10 +28,11 @@ screenshot it in the simulator, then connect it to the store.
 
 The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
 
-- **Migrations** `0001`–`0009`: schema, RLS, RPCs, storage, the designed features (multi-group
+- **Migrations** `0001`–`0010`: schema, RLS, RPCs, storage, the designed features (multi-group
   `item_groups`, closed days, reviews, read markers, fuzzed pins), column-level grants that hide
   exact coordinates (`0006`), a trigger that freezes what a SYSTEM line says (`0007`), `reserved_until` for reserved listings (`0008`), and lent-out or rented-out listings leaving
-  every feed until they are returned (`0009`, reversing 0008's "keep them visible"). Never
+  every feed until they are returned (`0009`, reversing 0008's "keep them visible"), and owner
+  edits through `update_item` with type and direction locked (`0010`). Never
   edit an applied migration; add the next number.
 - **Tests**: `npm run db:test` runs `supabase/tests/*.test.sql` (pgTAP) against the seed, each
   sensitive rule with a NEGATIVE case. Add one whenever a policy or RPC changes.
@@ -78,8 +79,9 @@ Rules that are not obvious from the code:
   (hosted), no bare `.env`. **`supabase db reset --linked` wipes production**; only `db push`
   may target it. There is no hosted project yet.
 
-Known gaps carried into Phase 3: editing a listing (the Edit button opens an empty create form),
-account deletion (Settings says so honestly), push notifications, older-message paging in chat.
+Known gaps carried into Phase 3: account deletion (Settings says so honestly), push
+notifications, older-message paging in chat. The listing form is one component
+(`organisms/ListingForm`) used by both create and edit; change it there.
 
 ## Phase 3 — Hardening and release
 
@@ -109,10 +111,11 @@ the feed RPCs. Do not start any of it until asked.
 
 # Routes
 
-`app/` holds: `welcome`, `auth/{phone,otp,profile,location}`, `(tabs)/{index,chats,create,groups,profile}`,
+`app/` holds: `welcome`, `auth/{email,otp,profile,location,dev-accounts}`, `(tabs)/{index,chats,create,groups,profile}`,
 `item/[id]`, `request/[itemId]` (modal), `chat/[id]`, `camera` (fullScreenModal), `search`,
 `transactions`, `group/{join,create,[id]}`, `settings`, `report` (modal), `user/[id]`,
-`reviews/[userId]`, `review/[transactionId]` (modal), `availability/[itemId]`. Register every new
+`reviews/[userId]`, `review/[transactionId]` (modal), `availability/[itemId]`, `item/edit/[id]`,
+`blocked`, `radius` (modal). Register every new
 route in `app/_layout.tsx` with its presentation. Sheets (`presentation: 'modal'`) are for quick
 interruptions of the current screen; anything the user will spend time in is a push.
 

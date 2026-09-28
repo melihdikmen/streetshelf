@@ -106,6 +106,7 @@ export default function RootLayout() {
           <Stack.Screen name="auth/location" options={{ title: '' }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="item/[id]" options={{ headerShown: false }} />
+          <Stack.Screen name="item/edit/[id]" options={{ title: t('edit.title') }} />
           <Stack.Screen name="chat/[id]" options={{ title: '' }} />
           <Stack.Screen name="search" options={{ headerShown: false }} />
           <Stack.Screen name="transactions" options={{ title: t('transactions.title') }} />

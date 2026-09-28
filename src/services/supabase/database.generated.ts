@@ -660,6 +660,29 @@ isOneToOne: false
         to: "reviews"
         isOneToOne: true
         isSetofReturn: false
+      } },
+"update_item":
+{ Args: { "p_description": string,"p_group_ids"?: (string)[],"p_images": (string)[],"p_item_id": string,"p_price_per_day": number,"p_title": string }; Returns: {
+              "created_at": string,
+"currency": string,
+"description": string,
+"id": string,
+"images": (string)[],
+"is_group_only": boolean,
+"item_type": Database["public"]['Enums']["item_type"],
+"location": unknown,
+"owner_id": string,
+"price_per_day": number | null,
+"request_type": Database["public"]['Enums']["request_type"],
+"status": Database["public"]['Enums']["item_status"],
+"title": string,
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "items"
+        isOneToOne: true
+        isSetofReturn: false
       } }
           }
           Enums: {

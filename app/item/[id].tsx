@@ -119,7 +119,7 @@ export default function ItemDetailScreen() {
         </Pressable>
       ) : null}
       <View style={styles.footerCta}>
-        <Button label={t('owner.edit')} variant="primary" size="lg" icon="pencil-outline" fullWidth onPress={() => router.push('/(tabs)/create')} />
+        <Button label={t('owner.edit')} variant="primary" size="lg" icon="pencil-outline" fullWidth onPress={() => router.push({ pathname: '/item/edit/[id]', params: { id: item.id } })} />
       </View>
     </View>
   ) : (

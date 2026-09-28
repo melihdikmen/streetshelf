@@ -59,6 +59,11 @@ export const styles = StyleSheet.create({
     gap: spacing.lg,
     marginBottom: spacing.xxl,
   },
+  kindRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
   groupChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',

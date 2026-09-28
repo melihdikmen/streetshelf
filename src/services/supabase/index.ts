@@ -8,4 +8,4 @@ export * as safetyApi from './safety';
 export * as transactionsApi from './transactions';
 export { supabase } from './client';
 export { AppError, toAppError, type AppErrorCode } from './errors';
-export type { Origin, RawItem } from './items';
+export type { ItemEdits, ListingPhoto, Origin, RawItem } from './items';

@@ -178,6 +178,46 @@ export async function createItem(userId: string, input: NewItemInput, origin: Or
   return row.id;
 }
 
+/** A photo in the listing form: already stored (`path`) or just picked (`uri` only). */
+export interface ListingPhoto {
+  uri: string;
+  path?: string;
+}
+
+export interface ItemEdits {
+  title: string;
+  description: string;
+  photos: ListingPhoto[];
+  pricePerDay?: number;
+  groupIds: string[];
+}
+
+/**
+ * Saves an owner's edits. New photos are uploaded; kept ones reuse their
+ * stored path, so re-saving a listing never re-uploads what is already there.
+ * Order is preserved (the first photo is the cover).
+ */
+export async function updateItem(userId: string, itemId: string, edits: ItemEdits): Promise<void> {
+  const paths = await Promise.all(
+    edits.photos.map(async (photo) => {
+      if (photo.path) return photo.path;
+      const path = `items/${userId}/${randomName()}`;
+      await uploadPhoto('item-images', path, photo.uri);
+      return path;
+    }),
+  );
+  const { error } = await supabase.rpc('update_item', {
+    p_item_id: itemId,
+    p_title: edits.title,
+    p_description: edits.description,
+    p_images: paths,
+    // Ignored by the RPC unless the listing is RENT.
+    p_price_per_day: edits.pricePerDay ?? 0,
+    p_group_ids: edits.groupIds,
+  });
+  if (error) throw toAppError(error);
+}
+
 export async function archiveItem(itemId: string): Promise<void> {
   const { error } = await supabase.from('items').update({ status: 'ARCHIVED' }).eq('id', itemId);
   if (error) throw toAppError(error);

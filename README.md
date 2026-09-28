@@ -32,7 +32,7 @@ src/theme/tokens.ts  colours, spacing, radius, type
 src/i18n/            tr (source) + en
 src/services/        supabase/ (one file per noun), location
 src/stores/          session.ts: caches + async actions over the services
-supabase/migrations/ 0001–0009
+supabase/migrations/ 0001–0010
 supabase/tests/      pgTAP
 docs/PRD.md          product spec v3.1
 ```

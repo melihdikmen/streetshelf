@@ -61,6 +61,8 @@ export interface Item {
   title: string;
   description: string;
   images: string[];
+  /** Stored object paths behind `images`, same order; kept for editing. */
+  imagePaths: string[];
   itemType: ItemType;
   requestType: RequestType;
   /** Per day, only for RENT. On a WANTED listing this is the requester's ceiling. */

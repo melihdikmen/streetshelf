@@ -14,6 +14,7 @@ import {
   toAppError,
   transactionsApi,
   type AppErrorCode,
+  type ItemEdits,
   type Origin,
   type RawItem,
 } from '../services/supabase';
@@ -139,6 +140,7 @@ interface SessionState {
   search: (query: string) => Promise<Item[]>;
   publishItem: (input: NewListing) => Promise<string>;
   archiveItem: (itemId: string) => Promise<void>;
+  updateItem: (itemId: string, edits: ItemEdits) => Promise<void>;
   loadUnavailable: (itemId: string) => Promise<void>;
   setUnavailableDates: (itemId: string, days: string[]) => Promise<void>;
 
@@ -397,6 +399,13 @@ export const useSession = create<SessionState>((set, get) => {
       const id = await itemsApi.createItem(userId, input, get().origin);
       await get().loadMyItems();
       return id;
+    },
+
+    updateItem: async (itemId, edits) => {
+      const userId = get().userId;
+      if (!userId) throw toAppError('not_signed_in');
+      await itemsApi.updateItem(userId, itemId, edits);
+      await Promise.all([get().loadItem(itemId), get().loadMyItems()]);
     },
 
     archiveItem: async (itemId) => {
