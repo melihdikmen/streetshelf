@@ -1,12 +1,12 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionSheetIOS, FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
+import { ActionSheetIOS, FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Avatar, ChatSkeleton, MessageBubble, ModeBadge, TransactionCard } from '../../src/components';
+import { AppText, Avatar, ChatComposer, ChatSkeleton, MessageBubble, ModeBadge, TransactionCard } from '../../src/components';
 import { styles } from '../../src/screens/chat/[id].styles';
 import { chatApi } from '../../src/services/supabase';
 import { useSession } from '../../src/stores/session';
@@ -41,10 +41,14 @@ export default function ChatScreen() {
   const showError = useSession((s) => s.showError);
   const reviewed = useSession((s) => s.reviewedTransactionIds);
 
-  const [draft, setDraft] = useState('');
-  const [sending, setSending] = useState(false);
   const listRef = useRef<FlatList<Message>>(null);
-  const scrollToEnd = () => setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+  // One pending scroll at a time, cleared on unmount so no timer outlives the screen.
+  const scrollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const scrollToEnd = useCallback(() => {
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+  }, []);
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
 
   // Opened from a push or a fresh request, the thread may not be in the list yet.
   useEffect(() => {
@@ -72,19 +76,20 @@ export default function ChatScreen() {
     });
   }, [id, itemId, markRead, receiveMessage, refreshTransaction]);
 
-  const send = async () => {
-    const body = draft.trim();
-    if (!body || sending) return;
-    setSending(true);
-    try {
-      await sendText(id, body);
-      setDraft('');
-    } catch (error) {
-      showError(error);
-    } finally {
-      setSending(false);
-    }
-  };
+  // The composer owns the draft; this only stores the message. Errors are
+  // shown here and rethrown so the composer keeps the text.
+  const send = useCallback(
+    async (body: string) => {
+      try {
+        await sendText(id, body);
+      } catch (error) {
+        showError(error);
+        throw error;
+      }
+    },
+    [id, sendText, showError],
+  );
+
 
   // The RPCs insert the SYSTEM card; Realtime delivers it, so there is no
   // optimistic append here that could disagree with the server.
@@ -119,50 +124,69 @@ export default function ChatScreen() {
       report();
     }
   };
+  // The memoised header reads the latest handler through this ref.
+  const openMenuRef = useRef(openMenu);
+  openMenuRef.current = openMenu;
+
+  // Stable between keystrokes and unrelated store updates, so the FlatList
+  // does not re-render every visible bubble and card for nothing.
+  const renderMessage = useCallback(
+    ({ item: message }: { item: Message }) => {
+      if (message.kind === 'TEXT') {
+        return <MessageBubble body={message.body ?? ''} createdAt={message.createdAt} mine={message.senderId === me.id} />;
+      }
+      const tx = transactions.find((candidate) => candidate.id === message.transactionId);
+      if (!tx || !conversation) return null;
+      return (
+        <TransactionCard
+          message={message}
+          transaction={tx}
+          item={conversation.item}
+          me={me}
+          other={conversation.other}
+          onAccept={onAccept}
+          onReject={onReject}
+          onCancel={onCancel}
+          onPickupPhoto={onPickupPhoto}
+          onReturnPhoto={onReturnPhoto}
+          onReview={onReview}
+          reviewed={reviewed.includes(tx.id)}
+        />
+      );
+    },
+    [conversation, me, onAccept, onCancel, onPickupPhoto, onReject, onReturnPhoto, onReview, reviewed, transactions],
+  );
+
+  // Built once per person: an inline function here would hand the navigator
+  // new options on every render of the thread.
+  const other = conversation?.other;
+  const headerOptions = useMemo(
+    () => ({
+      headerTitle: () =>
+        other ? (
+          <Pressable
+            accessibilityRole="button"
+            style={styles.headerTitle}
+            onPress={() => router.push({ pathname: '/user/[id]', params: { id: other.id } })}
+          >
+            <Avatar name={other.displayName} uri={other.avatarUrl} size={32} />
+            <AppText variant="bodyBold">{other.displayName}</AppText>
+          </Pressable>
+        ) : null,
+      headerRight: () => (
+        <Pressable accessibilityRole="button" onPress={() => openMenuRef.current()} hitSlop={12}>
+          <MaterialCommunityIcons name="dots-horizontal" size={24} color={colors.text} />
+        </Pressable>
+      ),
+    }),
+    [other, router],
+  );
 
   if (!conversation) return null;
 
-  const renderMessage = ({ item: message }: { item: Message }) => {
-    if (message.kind === 'TEXT') {
-      return <MessageBubble body={message.body ?? ''} createdAt={message.createdAt} mine={message.senderId === me.id} />;
-    }
-    const tx = transactions.find((candidate) => candidate.id === message.transactionId);
-    if (!tx) return null;
-    return (
-      <TransactionCard
-        message={message}
-        transaction={tx}
-        item={conversation.item}
-        me={me}
-        other={conversation.other}
-        onAccept={onAccept}
-        onReject={onReject}
-        onCancel={onCancel}
-        onPickupPhoto={onPickupPhoto}
-        onReturnPhoto={onReturnPhoto}
-        onReview={onReview}
-        reviewed={reviewed.includes(tx.id)}
-      />
-    );
-  };
-
   return (
     <View style={styles.root}>
-      <Stack.Screen
-        options={{
-          headerTitle: () => (
-            <Pressable accessibilityRole="button" style={styles.headerTitle} onPress={() => router.push({ pathname: '/user/[id]', params: { id: conversation.other.id } })}>
-              <Avatar name={conversation.other.displayName} uri={conversation.other.avatarUrl} size={32} />
-              <AppText variant="bodyBold">{conversation.other.displayName}</AppText>
-            </Pressable>
-          ),
-          headerRight: () => (
-            <Pressable accessibilityRole="button" onPress={openMenu} hitSlop={12}>
-              <MaterialCommunityIcons name="dots-horizontal" size={24} color={colors.text} />
-            </Pressable>
-          ),
-        }}
-      />
+      <Stack.Screen options={headerOptions} />
 
       <Pressable
         accessibilityRole="button"
@@ -197,19 +221,8 @@ export default function ChatScreen() {
           onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
         />
 
-        <View style={[styles.composer, { paddingBottom: insets.bottom + 8 }]}>
-          <TextInput
-            style={styles.input}
-            placeholder={t('chats.placeholder')}
-            placeholderTextColor={colors.textSubtle}
-            value={draft}
-            onChangeText={setDraft}
-            multiline
-          />
-          <Pressable accessibilityRole="button" disabled={sending} onPress={send} style={[styles.sendButton, (!draft.trim() || sending) && styles.sendDisabled]}>
-            <MaterialCommunityIcons name="send" size={20} color={colors.textOnDark} />
-          </Pressable>
-        </View>
+        <ChatComposer placeholder={t('chats.placeholder')} bottomInset={insets.bottom} onSend={send} />
+
       </KeyboardAvoidingView>
     </View>
   );

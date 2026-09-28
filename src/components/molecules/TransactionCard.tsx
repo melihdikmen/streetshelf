@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { memo } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -37,8 +38,11 @@ export interface TransactionCardProps {
  *   * REQUEST, PENDING, I initiated → "waiting" + Cancel.
  *   * ACCEPTED and I am the owner → "take handover photo".
  *   * DELIVERED and I am the owner, not a GIFT → "take return photo".
+ *
+ * Memoised: in a thread the screen passes stable callbacks and the live
+ * transaction object, so a card redraws only when its own transaction does.
  */
-export function TransactionCard({
+export const TransactionCard = memo(function TransactionCard({
   message,
   transaction: tx,
   item,
@@ -207,4 +211,4 @@ export function TransactionCard({
       ) : null}
     </View>
   );
-}
+});

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View } from 'react-native';
 
 import { formatTime } from '../../utils/format';
@@ -10,8 +11,11 @@ export interface MessageBubbleProps {
   mine: boolean;
 }
 
-/** Plain text message. Mine on the right in ink, theirs on the left in white. */
-export function MessageBubble({ body, createdAt, mine }: MessageBubbleProps) {
+/**
+ * Plain text message. Mine on the right in ink, theirs on the left in white.
+ * Memoised: props are primitives, so a bubble redraws only when its text does.
+ */
+export const MessageBubble = memo(function MessageBubble({ body, createdAt, mine }: MessageBubbleProps) {
   return (
     <View style={[styles.row, mine && styles.rowMine]}>
       <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
@@ -22,4 +26,4 @@ export function MessageBubble({ body, createdAt, mine }: MessageBubbleProps) {
       </View>
     </View>
   );
-}
+});

@@ -34,6 +34,10 @@ export default function ChatsScreen() {
   );
 
   const open = useCallback((c: Conversation) => router.push({ pathname: '/chat/[id]', params: { id: c.id } }), [router]);
+  const renderRow = useCallback(
+    ({ item }: { item: Conversation }) => <ConversationRow conversation={item} onPress={open} />,
+    [open],
+  );
   const refresh = useCallback(async () => {
     setRefreshing(true);
     await loadConversations().catch(showError);
@@ -48,7 +52,7 @@ export default function ChatsScreen() {
       <FlatList
         data={conversations}
         keyExtractor={(c) => c.id}
-        renderItem={({ item }) => <ConversationRow conversation={item} onPress={open} />}
+        renderItem={renderRow}
         ItemSeparatorComponent={Separator}
         contentContainerStyle={styles.list}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}

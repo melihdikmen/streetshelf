@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, TextInput, View } from 'react-native';
 
@@ -30,6 +30,9 @@ export default function SearchScreen() {
   const showError = useSession((s) => s.showError);
   const [query, setQuery] = useState('');
   const cellWidth = useGridCellWidth();
+  // One callback for every card, so the memoised ItemCard is not redrawn on
+  // each render just because it received a new arrow function.
+  const openItem = useCallback((item: Item) => router.push({ pathname: '/item/[id]', params: { id: item.id } }), [router]);
   const [results, setResults] = useState<Item[]>([]);
   const [searching, setSearching] = useState(false);
   const latest = useRef(0);
@@ -123,7 +126,7 @@ export default function SearchScreen() {
           }
           renderItem={({ item }) => (
             <View style={{ width: cellWidth }}>
-              <ItemCard item={item} onPress={() => router.push({ pathname: '/item/[id]', params: { id: item.id } })} />
+              <ItemCard item={item} onPress={openItem} />
             </View>
           )}
           ListEmptyComponent={

@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
@@ -37,6 +37,9 @@ export default function UserProfileScreen() {
   const [userItems, setUserItems] = useState<Item[] | null>(null);
   const [reviewsLoaded, setReviewsLoaded] = useState(false);
   const cellWidth = useGridCellWidth();
+  // One callback for every card, so the memoised ItemCard is not redrawn on
+  // each render just because it received a new arrow function.
+  const openItem = useCallback((item: Item) => router.push({ pathname: '/item/[id]', params: { id: item.id } }), [router]);
   const user = id === me.id ? me : profiles[id];
 
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function UserProfileScreen() {
       <View style={styles.grid}>
         {items.map((item) => (
           <View key={item.id} style={styles.gridCell}>
-            <ItemCard item={item} onPress={() => router.push({ pathname: '/item/[id]', params: { id: item.id } })} />
+            <ItemCard item={item} onPress={openItem} />
           </View>
         ))}
       </View>

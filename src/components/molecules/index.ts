@@ -1,4 +1,5 @@
 export { CalendarGrid } from './CalendarGrid';
+export { ChatComposer } from './ChatComposer';
 export { ConversationRow } from './ConversationRow';
 export { DayPicker, dayFromToday, expandRange, toIsoDay } from './DayPicker';
 export { EmptyState } from './EmptyState';

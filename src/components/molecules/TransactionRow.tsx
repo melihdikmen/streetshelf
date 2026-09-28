@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Image } from 'expo-image';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +19,10 @@ export interface TransactionRowProps {
   reviewed?: boolean;
 }
 
-/** One transaction in "My activity": item, the other person, dates, stepper. */
-export function TransactionRow({ transaction: tx, item, other, mine, onPress, onReview, reviewed = false }: TransactionRowProps) {
+/** One transaction in "My activity": item, the other person, dates, stepper. *
+ * Memoised: pass stable callbacks (built once per row) or it redraws anyway.
+ */
+export const TransactionRow = memo(function TransactionRow({ transaction: tx, item, other, mine, onPress, onReview, reviewed = false }: TransactionRowProps) {
   const { t } = useTranslation();
   return (
     <Card onPress={onPress} style={styles.card}>
@@ -65,4 +68,4 @@ export function TransactionRow({ transaction: tx, item, other, mine, onPress, on
       ) : null}
     </Card>
   );
-}
+});

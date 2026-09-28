@@ -125,7 +125,7 @@ Every screen and component is written to cause the fewest performance problems p
 This is a rule, not a cleanup pass. Concretely:
 
 - **Store selectors return stable references.** Never `filter`/`map`/`reduce` to an
-  array or object inside a `useMockSession` (later Supabase) selector — it returns a new
+  array or object inside a `useSession` selector — it returns a new
   reference every render and re-renders forever (this already bit Profile and Group
   detail). Select the raw slice, derive with `useMemo`. Numbers, strings and `find`
   results are fine.
@@ -153,6 +153,44 @@ This is a rule, not a cleanup pass. Concretely:
   a refresh keeps the cached rows on screen. All skeletons share one shimmer clock in
   `atoms/Skeleton.tsx` and respect the system reduce-motion setting; do not give a skeleton its
   own animation.
+- **Hooks run before any early return.** A `useCallback`/`useMemo` after `if (!x) return` breaks
+  the rules of hooks the first time `x` arrives.
+
+## Memory leaks and re-renders
+
+Check both while writing, not afterwards. What this codebase has already got wrong, and the rule
+that prevents it:
+
+**Leaks: everything an effect starts, its cleanup stops.**
+- Timers: `setTimeout`/`setInterval` started from a component live in a ref and are cleared on
+  unmount (chat's `scrollTimer`); debounces clear the previous handle first.
+- Subscriptions: Supabase Realtime channels are removed on unmount and opened with a unique
+  topic (`uniqueTopic` in `chat.ts`); reusing a name hands back a stale, already-subscribed
+  channel. NetInfo, AppState, auth and keyboard listeners return their unsubscribe from the effect.
+- Async results after the screen has moved on: guard with a request counter or an ignore flag
+  (search, `loadFeed`) so a slow answer cannot overwrite newer state.
+- Caches in the global store are bounded or reset on sign-out: `messages` keeps the last
+  `MAX_CACHED_THREADS` threads. Screen-local, throwaway state never goes into the store.
+
+**Re-renders: subscribe narrowly, keep props stable, isolate fast-changing state.**
+- Select the narrowest slice: one profile by id, one thread id, a number. Never subscribe a screen
+  to a whole map or list it only reads one entry of (`profiles`, `itemCache`,
+  `conversations`); the inbox subscription reloads `conversations` on every message, so a broad
+  selector re-renders the screen on every message anywhere (item detail did this).
+- State that changes per keystroke lives in the smallest component that needs it. A chat draft in
+  the thread screen re-rendered every bubble, every card and the header on each letter; it now
+  lives in the memoised `ChatComposer`.
+- List rows and cards are `memo` (`ItemCard`, `ConversationRow`, `TransactionRow`,
+  `MessageBubble`, `TransactionCard`), and `memo` only helps if the props are stable: pass one
+  `useCallback` handler (`openItem(item)`) instead of an inline arrow per card, build per-row
+  handlers once inside the `useMemo` that builds the rows, and give `FlatList` a
+  `useCallback` `renderItem`.
+- Navigation options are memoised: an inline `options={{ headerTitle: () => … }}` object sets new
+  options on every render.
+- Verify, do not assume: React DevTools "Highlight updates" / Profiler shows what re-renders on a
+  keystroke or a message; Xcode Instruments (Allocations) and the Android Studio Memory Profiler
+  show whether memory returns to baseline after leaving a screen or a long chat.
+
 - **Measure before optimising further**: Metro's perf monitor for JS FPS, Xcode Instruments
   for native; a fix without a measurement is a guess. Run the `react-native-best-practices`
   skill's checklist when touching lists, animations or anything that re-renders often.

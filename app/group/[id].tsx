@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Share, View } from 'react-native';
 
@@ -28,6 +28,9 @@ export default function GroupDetailScreen() {
   const [items, setItems] = useState<Item[] | null>(null);
   const [members, setMembers] = useState<GroupMember[] | null>(null);
   const cellWidth = useGridCellWidth();
+  // One callback for every card, so the memoised ItemCard is not redrawn on
+  // each render just because it received a new arrow function.
+  const openItem = useCallback((item: Item) => router.push({ pathname: '/item/[id]', params: { id: item.id } }), [router]);
 
   useEffect(() => {
     loadGroupItems(id).then(setItems).catch(showError);
@@ -93,7 +96,7 @@ export default function GroupDetailScreen() {
       <View style={styles.grid}>
         {(items ?? []).map((item) => (
           <View key={item.id} style={item.requestType === 'WANTED' ? styles.gridRow : styles.gridCell}>
-            <ItemCard item={item} onPress={() => router.push({ pathname: '/item/[id]', params: { id: item.id } })} />
+            <ItemCard item={item} onPress={openItem} />
           </View>
         ))}
       </View>

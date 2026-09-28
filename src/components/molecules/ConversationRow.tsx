@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Image } from 'expo-image';
 import { Pressable, View } from 'react-native';
 
@@ -14,8 +15,10 @@ export interface ConversationRowProps {
 /**
  * One line in the chat list: the other person, the item it is about, the
  * last message, and an unread count that is the only accent on the row.
+ *
+ * Memoised: a list refresh only redraws rows whose conversation changed.
  */
-export function ConversationRow({ conversation, onPress }: ConversationRowProps) {
+export const ConversationRow = memo(function ConversationRow({ conversation, onPress }: ConversationRowProps) {
   const { other, item, lastMessage, lastMessageAt, unread } = conversation;
   const cover = item.images[0];
   return (
@@ -55,4 +58,4 @@ export function ConversationRow({ conversation, onPress }: ConversationRowProps)
       ) : null}
     </Pressable>
   );
-}
+});

@@ -85,6 +85,28 @@ export interface ReportInput {
 
 const SIGNED_OUT: Profile = { id: '', displayName: '' };
 
+/**
+ * How many threads keep their messages in memory. A thread holds up to 300
+ * messages; without a cap every chat opened in a long session would stay
+ * resident. Reopening an evicted thread just refetches it (it refetches on
+ * open anyway).
+ */
+const MAX_CACHED_THREADS = 20;
+
+/** Sets one thread's messages, evicting the least recently loaded beyond the cap. */
+function withThread(
+  messages: Record<string, Message[]>,
+  conversationId: string,
+  list: Message[],
+): Record<string, Message[]> {
+  // Re-inserting moves the thread to the end: key order is recency.
+  const { [conversationId]: _previous, ...rest } = messages;
+  const next: Record<string, Message[]> = { ...rest, [conversationId]: list };
+  const ids = Object.keys(next);
+  for (const id of ids.slice(0, Math.max(0, ids.length - MAX_CACHED_THREADS))) delete next[id];
+  return next;
+}
+
 interface SessionState {
   /** False until the persisted session has been read on launch. */
   authReady: boolean;
@@ -503,7 +525,7 @@ export const useSession = create<SessionState>((set, get) => {
       const txIds = [...new Set(list.map((m) => m.transactionId).filter((id): id is string => !!id))];
       const known = new Set(get().transactions.map((t) => t.id));
       await Promise.all(txIds.filter((id) => !known.has(id)).map((id) => get().refreshTransaction(id)));
-      set((state) => ({ messages: { ...state.messages, [conversationId]: list } }));
+      set((state) => ({ messages: withThread(state.messages, conversationId, list) }));
     },
 
     receiveMessage: (conversationId, message) =>

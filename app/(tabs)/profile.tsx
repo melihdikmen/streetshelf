@@ -8,6 +8,7 @@ import { AppText, Avatar, Card, ItemCard, ItemGridSkeleton, ListRow, Screen, Sta
 import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
 import { styles } from '../../src/screens/tabs/profile.styles';
 import { useSession } from '../../src/stores/session';
+import type { Item } from '../../src/types/domain';
 import { colors } from '../../src/theme/tokens';
 
 /** Who I am, what I have shared, and the doors to activity and settings. */
@@ -20,6 +21,9 @@ export default function ProfileScreen() {
   const myStats = useSession((s) => s.myStats);
   const itemsLoaded = useSession((s) => s.loaded.myItems);
   const cellWidth = useGridCellWidth();
+  // One callback for every card, so the memoised ItemCard is not redrawn on
+  // each render just because it received a new arrow function.
+  const openItem = useCallback((item: Item) => router.push({ pathname: '/item/[id]', params: { id: item.id } }), [router]);
   const groupCount = useSession((s) => s.groups.length);
   const loadMyItems = useSession((s) => s.loadMyItems);
   const loadProfile = useSession((s) => s.loadProfile);
@@ -85,7 +89,7 @@ export default function ProfileScreen() {
       <View style={styles.grid}>
         {myItems.map((item) => (
           <View key={item.id} style={item.requestType === 'WANTED' ? styles.gridRow : styles.gridCell}>
-            <ItemCard item={item} onPress={() => router.push({ pathname: '/item/[id]', params: { id: item.id } })} />
+            <ItemCard item={item} onPress={openItem} />
           </View>
         ))}
       </View>

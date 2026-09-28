@@ -49,12 +49,18 @@ export default function ItemDetailScreen() {
     loadTransactions().catch(() => undefined);
   }, [id, loadTransactions]);
 
-  const profiles = useSession((s) => s.profiles);
-  const conversations = useSession((s) => s.conversations);
   /** The accepted or ongoing handover of this item that the viewer is part of. */
   const liveTx = useMemo(
     () => transactions.find((tx) => tx.itemId === id && (tx.status === 'ACCEPTED' || tx.status === 'DELIVERED')),
     [id, transactions],
+  );
+  // Narrow subscriptions: one person and one thread id. Selecting the whole
+  // profiles map or conversation list re-rendered this screen on every new
+  // message anywhere (the inbox subscription reloads the list).
+  const otherId = liveTx ? (liveTx.ownerId === me.id ? liveTx.borrowerId : liveTx.ownerId) : undefined;
+  const holder = useSession((s) => (otherId ? s.profiles[otherId] : undefined));
+  const holderThreadId = useSession((s) =>
+    otherId ? s.conversations.find((c) => c.item.id === id && c.other.id === otherId)?.id : undefined,
   );
 
   if (!item) {
@@ -185,12 +191,8 @@ export default function ItemDetailScreen() {
               tx={liveTx}
               itemType={item.itemType}
               viewerIsOwner={liveTx.ownerId === me.id}
-              other={profiles[liveTx.ownerId === me.id ? liveTx.borrowerId : liveTx.ownerId]}
-              conversationId={
-                conversations.find(
-                  (c) => c.item.id === item.id && c.other.id === (liveTx.ownerId === me.id ? liveTx.borrowerId : liveTx.ownerId),
-                )?.id
-              }
+              other={holder}
+              conversationId={holderThreadId}
             />
           ) : item.status === 'RESERVED' ? (
             <View style={styles.reservedBanner}>

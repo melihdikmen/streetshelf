@@ -50,10 +50,35 @@ export default function TransactionsScreen() {
           const other = profiles[otherId];
           if (!item || !other) return null;
           const conversation = conversations.find((c) => c.item.id === tx.itemId && c.other.id === otherId);
-          return { tx, item, other, mine: tx.ownerId === userId, conversationId: conversation?.id };
+          const conversationId = conversation?.id;
+          // Built here, with the row, so each handler keeps its identity until
+          // the row's data changes and the memoised TransactionRow can skip.
+          return {
+            tx,
+            item,
+            other,
+            mine: tx.ownerId === userId,
+            open: () => conversationId && router.push({ pathname: '/chat/[id]', params: { id: conversationId } }),
+            review: () => router.push({ pathname: '/review/[transactionId]', params: { transactionId: tx.id } }),
+          };
         })
         .filter((row): row is NonNullable<typeof row> => row !== null),
-    [conversations, itemCache, profiles, tab, transactions, userId],
+    [conversations, itemCache, profiles, router, tab, transactions, userId],
+  );
+
+  const renderRow = useCallback(
+    ({ item: row }: { item: (typeof rows)[number] }) => (
+      <TransactionRow
+        transaction={row.tx}
+        item={row.item}
+        other={row.other}
+        mine={row.mine}
+        onPress={row.open}
+        reviewed={reviewed.includes(row.tx.id)}
+        onReview={row.review}
+      />
+    ),
+    [reviewed],
   );
 
   return (
@@ -82,21 +107,7 @@ export default function TransactionsScreen() {
             }}
           />
         }
-        renderItem={({ item: row }) => (
-          <TransactionRow
-            transaction={row.tx}
-            item={row.item}
-            other={row.other}
-            mine={row.mine}
-            onPress={() =>
-              row.conversationId
-                ? router.push({ pathname: '/chat/[id]', params: { id: row.conversationId } })
-                : undefined
-            }
-            reviewed={reviewed.includes(row.tx.id)}
-            onReview={() => router.push({ pathname: '/review/[transactionId]', params: { transactionId: row.tx.id } })}
-          />
-        )}
+        renderItem={renderRow}
         ListEmptyComponent={
           loaded ? (
             <EmptyState icon="swap-horizontal" title={t('transactions.empty')} body={t('transactions.emptyBody')} />
