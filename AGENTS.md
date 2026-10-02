@@ -28,12 +28,15 @@ screenshot it in the simulator, then connect it to the store.
 
 The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
 
-- **Migrations** `0001`–`0010`: schema, RLS, RPCs, storage, the designed features (multi-group
+- **Migrations** `0001`–`0011`: schema, RLS, RPCs, storage, the designed features (multi-group
   `item_groups`, closed days, reviews, read markers, fuzzed pins), column-level grants that hide
   exact coordinates (`0006`), a trigger that freezes what a SYSTEM line says (`0007`), `reserved_until` for reserved listings (`0008`), and lent-out or rented-out listings leaving
   every feed until they are returned (`0009`, reversing 0008's "keep them visible"), and owner
-  edits through `update_item` with type and direction locked (`0010`). Never
+  edits through `update_item` with type and direction locked (`0010`), and account deletion
+  (`0011`: refused during a handover, groups handed to the longest-standing member). Never
   edit an applied migration; add the next number.
+- **Edge functions** `supabase/functions/`: `delete-account` (service role; files through the
+  Storage API, then the auth user, the rest cascades). Locally: `npx supabase functions serve`.
 - **Tests**: `npm run db:test` runs `supabase/tests/*.test.sql` (pgTAP) against the seed, each
   sensitive rule with a NEGATIVE case. Add one whenever a policy or RPC changes.
 - **Sign-in is email only**: a 6-digit code, never a password or a link. Phone/SMS was removed on
@@ -79,8 +82,11 @@ Rules that are not obvious from the code:
   (hosted), no bare `.env`. **`supabase db reset --linked` wipes production**; only `db push`
   may target it. There is no hosted project yet.
 
-Known gaps carried into Phase 3: account deletion (Settings says so honestly), push
-notifications, older-message paging in chat. The listing form is one component
+Known gaps carried into Phase 3: push notifications, older-message paging in chat. The website
+(`streetshelf.app`: landing page, TR/EN terms and privacy policy) is static HTML in `site/`,
+deployed with `npx vercel deploy --prod` from that folder; Settings opens the legal pages at
+`LEGAL_BASE_URL` (`src/services/legal.ts`). Keep those paths stable: the store listings link
+to them. Support address: support@streetshelf.app (Hostinger Mail; DNS is at Hostinger). The listing form is one component
 (`organisms/ListingForm`) used by both create and edit; change it there.
 
 ## Phase 3 — Hardening and release
@@ -91,9 +97,8 @@ notifications, older-message paging in chat. The listing form is one component
   retry for handover-photo uploads, an offline banner. Domain data is never cached in MMKV.
 - Error and empty states for every network call (the `errors.*` keys exist), Crashlytics or
   Sentry, analytics events for the funnel (view listing → request → accept → handover).
-- Store requirements: block/report are already modelled; add account deletion that really
-  deletes (an edge function with the service role), privacy policy and terms URLs in
-  Settings, camera/photo/location permission copy in `app.json`.
+- Store requirements: block/report, account deletion, the legal pages and the iOS permission
+  copy exist.
 - EAS build profiles, TestFlight and internal testing track; a release checklist in
   `docs/release.md`.
 

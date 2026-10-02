@@ -5,6 +5,7 @@ import { Alert, View } from 'react-native';
 
 import { AppText, Button, Card, ListRow, Screen } from '../src/components';
 import i18n, { setLanguage } from '../src/i18n';
+import { type LegalDocument, openLegal } from '../src/services/legal';
 import { styles } from '../src/screens/settings.styles';
 import { useSession } from '../src/stores/session';
 
@@ -32,6 +33,8 @@ export default function SettingsScreen() {
       showError(error);
     }
   };
+
+  const openDocument = (document: LegalDocument) => openLegal(document, i18n.language).catch(showError);
 
   const doDelete = async () => {
     setDeleting(true);
@@ -67,8 +70,8 @@ export default function SettingsScreen() {
       </Section>
 
       <Section title={t('settings.about')}>
-        <ListRow icon="file-document-outline" label={t('settings.terms')} onPress={() => undefined} />
-        <ListRow icon="shield-check-outline" label={t('settings.privacyPolicy')} onPress={() => undefined} />
+        <ListRow icon="file-document-outline" label={t('settings.terms')} onPress={() => openDocument('terms')} />
+        <ListRow icon="shield-check-outline" label={t('settings.privacyPolicy')} onPress={() => openDocument('privacy')} />
         <ListRow icon="information-outline" label={t('settings.version', { version: '1.0.0' })} />
       </Section>
 
