@@ -102,7 +102,16 @@ Rules that are not obvious from the code:
   `MAX_PINS` as a last-resort cap.
 - Environments follow Vouch: `.env.local` (local stack, LAN IP) and `.env.production`
   (hosted), no bare `.env`. **`supabase db reset --linked` wipes production**; only `db push`
-  may target it. There is no hosted project yet.
+  may target it. The hosted project is `svdcltwtiidvaoevdoxn` (Frankfurt, free plan, created
+  2026-10-02, linked): migrations 0001–0012 pushed (never the seed), both edge functions
+  deployed with `PUSH_SECRET` and `FCM_SERVICE_ACCOUNT` set, Vault holds the push URL and
+  secret, auth is email OTP with 6 digits and `site_url` https://streetshelf.app. The DB password
+  and push secret are in the macOS Keychain (`streetshelf-supabase-db`,
+  `streetshelf-push-secret`), not in any file. **Still missing before anyone can sign in:**
+  custom SMTP (Hostinger) — the default sender mails a magic link, not the code, and the free
+  plan refuses template edits until a custom SMTP is set; then set the OTP template
+  (`supabase/templates/otp.html`, subject "StreetShelf giriş kodun") and raise the email rate
+  limit. Move to Pro (no pausing, daily backups) before the store release.
 
 Known gaps carried into Phase 3: older-message paging in chat. The website
 (`streetshelf.app`: landing page, TR/EN terms and privacy policy) is static HTML in `site/`,
@@ -113,8 +122,11 @@ to them. Support address: support@streetshelf.app (Hostinger Mail; DNS is at Hos
 
 ## Phase 3 — Hardening and release
 
-- Offline: MMKV session storage (`react-native-mmkv` is installed but unused), a queued
-  retry for handover-photo uploads, an offline banner. Domain data is never cached in MMKV.
+- Offline: MMKV session storage and the offline banner exist. The queued retry for
+  handover-photo uploads is **deferred on purpose** (2026-10-02): a failed upload keeps the
+  photo on the preview and "Use" retries it (the upload upserts), so a queue only saves the
+  photo when the app is closed offline. Build it if users report lost handover photos. Domain
+  data is never cached in MMKV.
 - Error and empty states for every network call (the `errors.*` keys exist), Crashlytics or
   Sentry, analytics events for the funnel (view listing → request → accept → handover).
 - Store requirements: block/report, account deletion, the legal pages and the iOS permission
