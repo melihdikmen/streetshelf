@@ -147,6 +147,7 @@ interface SessionState {
   verifyOtp: (email: string, code: string) => Promise<{ onboarded: boolean }>;
   completeOnboarding: (displayName: string, avatarLocalUri?: string, radiusM?: number) => Promise<void>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   enableLocation: () => Promise<boolean>;
   setRadius: (radiusM: number) => void;
   showToast: (message: string) => void;
@@ -352,6 +353,11 @@ export const useSession = create<SessionState>((set, get) => {
 
     signOut: async () => {
       await authApi.signOut();
+      reset();
+    },
+
+    deleteAccount: async () => {
+      await authApi.deleteAccount();
       reset();
     },
 

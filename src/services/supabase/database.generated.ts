@@ -577,6 +577,11 @@ isOneToOne: false
               "approx_lat": number,"approx_lng": number,"created_at": string,"currency": string,"description": string,"distance_m": number,"group_ids": (string)[],"id": string,"images": (string)[],"is_group_only": boolean,"item_type": Database["public"]['Enums']["item_type"],"owner_id": string,"price_per_day": number,"request_type": Database["public"]['Enums']["request_type"],"reserved_until": string,"status": Database["public"]['Enums']["item_status"],"title": string
             }[]
                            },
+"prepare_account_deletion":
+{ Args: { "p_user": string }; Returns: {
+              "bucket": string,"path": string
+            }[]
+                           },
 "profile_summary":
 { Args: { "p_user_id": string }; Returns: {
               "area": string,"avatar_path": string,"borrowed_count": number,"display_name": string,"id": string,"member_since": string,"rating": number,"review_count": number,"shared_count": number
@@ -810,4 +815,3 @@ export const Constants = {
           }
         }
 } as const
-

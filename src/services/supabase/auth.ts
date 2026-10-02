@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import { FunctionsHttpError, type Session } from '@supabase/supabase-js';
 
 import { supabase } from './client';
 import { toAppError } from './errors';
@@ -67,6 +67,24 @@ export async function markOnboarded(): Promise<void> {
 export async function signOut(): Promise<void> {
   const { error } = await supabase.auth.signOut();
   if (error) throw toAppError(error);
+}
+
+/**
+ * Permanently deletes the signed-in account through the `delete-account` edge
+ * function (a client cannot delete an auth user), then drops the now-dead
+ * session from this device. Refused with `active_transactions` while a
+ * handover is in progress.
+ */
+export async function deleteAccount(): Promise<void> {
+  const { error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
+  if (error) {
+    // The function answers `{ code }`; a network failure has no response body.
+    const body: unknown = error instanceof FunctionsHttpError ? await error.context.json().catch(() => null) : null;
+    const code = typeof body === 'object' && body !== null && 'code' in body ? String(body.code) : error;
+    throw toAppError(code);
+  }
+  // `local`: the user no longer exists, so a server-side sign-out would fail.
+  await supabase.auth.signOut({ scope: 'local' });
 }
 
 /**

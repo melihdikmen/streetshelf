@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, View } from 'react-native';
 
@@ -14,8 +15,10 @@ export default function SettingsScreen() {
   const radius = useSession((s) => s.searchRadiusM);
   const blocked = useSession((s) => s.blockedUserIds);
   const signOut = useSession((s) => s.signOut);
+  const deleteMyAccount = useSession((s) => s.deleteAccount);
   const showToast = useSession((s) => s.showToast);
   const showError = useSession((s) => s.showError);
+  const [deleting, setDeleting] = useState(false);
   // Two languages, so a tap flips between them; saved across launches.
   const toggleLanguage = () => setLanguage(i18n.language === 'tr' ? 'en' : 'tr');
 
@@ -30,9 +33,25 @@ export default function SettingsScreen() {
     }
   };
 
-  // Real deletion needs a server-side function with the service role
-  // (AGENTS.md, Phase 3). Until then the button says so instead of pretending.
-  const deleteAccount = () => Alert.alert(t('settings.deleteAccount'), t('settings.deleteNotReady'));
+  const doDelete = async () => {
+    setDeleting(true);
+    try {
+      await deleteMyAccount();
+      showToast(t('settings.deleted'));
+      router.dismissAll();
+      router.replace('/welcome');
+    } catch (error) {
+      // Stays on Settings; `active_transactions` explains what to finish first.
+      setDeleting(false);
+      showError(error);
+    }
+  };
+
+  const deleteAccount = () =>
+    Alert.alert(t('settings.deleteAccount'), t('settings.deleteConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('settings.deleteAction'), style: 'destructive', onPress: doDelete },
+    ]);
 
   return (
     <Screen scroll edges={['left', 'right']}>
@@ -55,7 +74,7 @@ export default function SettingsScreen() {
 
       <View style={styles.danger}>
         <Button label={t('profile.signOut')} variant="secondary" fullWidth onPress={doSignOut} />
-        <Button label={t('settings.deleteAccount')} variant="ghost" onPress={deleteAccount} />
+        <Button label={t('settings.deleteAccount')} variant="danger" loading={deleting} disabled={deleting} onPress={deleteAccount} />
       </View>
     </Screen>
   );

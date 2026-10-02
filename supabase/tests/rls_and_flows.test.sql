@@ -8,7 +8,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(48);
+select plan(54);
 
 -- ----------------------------------------------------------------- helpers --
 
@@ -382,6 +382,52 @@ select is(
   (select array_agg(unread order by last_message_at desc) from my_conversations()),
   array[1, 2, 0, 0],
   'unread counts respect the read markers'
+);
+
+-- ------------------------------------------------------- account deletion --
+
+select pg_temp.login(:can);
+select throws_ok(
+  $$ select * from prepare_account_deletion('a0000000-0000-4000-8000-000000000005') $$,
+  '42501',
+  null,
+  'NEGATIVE: a signed-in user cannot start a deletion, not even their own'
+);
+
+select set_config('role', 'service_role', true);
+select throws_ok(
+  $$ select * from prepare_account_deletion('a0000000-0000-4000-8000-000000000001') $$,
+  'active_transactions',
+  'NEGATIVE: someone with a handover in progress cannot be deleted'
+);
+
+select lives_ok(
+  $$ select * from prepare_account_deletion('a0000000-0000-4000-8000-000000000005') $$,
+  'someone with only finished handovers can be prepared for deletion'
+);
+
+select pg_temp.logout();
+select is(
+  (select (g.created_by, m.role)
+   from groups g join group_members m on m.group_id = g.id and m.user_id = g.created_by
+   where g.id = 'b0000000-0000-4000-8000-000000000002'),
+  ('a0000000-0000-4000-8000-000000000006'::uuid, 'ADMIN'::group_role),
+  'the founder''s group is handed to the remaining member, as admin'
+);
+
+delete from auth.users where id = :can;
+select is(
+  (select count(*)::int from groups where id = 'b0000000-0000-4000-8000-000000000002'),
+  1,
+  'the group outlives its founder''s account'
+);
+
+select is(
+  (select count(*)::int from items where owner_id = :can)
+    + (select count(*)::int from transactions where :can in (owner_id, borrower_id))
+    + (select count(*)::int from reviews where :can in (from_id, to_id)),
+  0,
+  'listings, handovers and reviews go with the account'
 );
 
 select * from finish();

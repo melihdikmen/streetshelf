@@ -23,6 +23,7 @@ export const APP_ERROR_CODES = [
   'already_reviewed',
   'not_finished',
   'upload_failed',
+  'active_transactions',
   'unknown',
 ] as const;
 
