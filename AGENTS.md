@@ -108,11 +108,10 @@ Rules that are not obvious from the code:
   deployed with `PUSH_SECRET` and `FCM_SERVICE_ACCOUNT` set, Vault holds the push URL and
   secret, auth is email OTP with 6 digits and `site_url` https://streetshelf.app. The DB password
   and push secret are in the macOS Keychain (`streetshelf-supabase-db`,
-  `streetshelf-push-secret`), not in any file. **Still missing before anyone can sign in:**
-  custom SMTP (Hostinger) — the default sender mails a magic link, not the code, and the free
-  plan refuses template edits until a custom SMTP is set; then set the OTP template
-  (`supabase/templates/otp.html`, subject "StreetShelf giriş kodun") and raise the email rate
-  limit. Move to Pro (no pausing, daily backups) before the store release.
+  `streetshelf-push-secret`), not in any file. Email goes through Hostinger SMTP as `support@streetshelf.app`
+  (sender name StreetShelf, 100 emails/hour); the OTP template and subject are set from
+  `supabase/templates/otp.html` — edit that file and PATCH the auth config again when it changes.
+  Move to Pro (no pausing, daily backups) before the store release.
 
 Known gaps carried into Phase 3: older-message paging in chat. The website
 (`streetshelf.app`: landing page, TR/EN terms and privacy policy) is static HTML in `site/`,
