@@ -136,7 +136,7 @@ the feed RPCs. Do not start any of it until asked.
 
 # Routes
 
-`app/` holds: `welcome`, `auth/{email,otp,profile,location,dev-accounts}`, `(tabs)/{index,chats,create,groups,profile}`,
+`app/` holds: `welcome`, `auth/{email,otp,profile,location,notifications,dev-accounts}`, `(tabs)/{index,chats,create,groups,profile}`,
 `item/[id]`, `request/[itemId]` (modal), `chat/[id]`, `camera` (fullScreenModal), `search`,
 `transactions`, `group/{join,create,[id]}`, `settings`, `report` (modal), `user/[id]`,
 `reviews/[userId]`, `review/[transactionId]` (modal), `availability/[itemId]`, `item/edit/[id]`,

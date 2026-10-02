@@ -198,6 +198,13 @@ const en: typeof tr = {
     radiusLabel: 'How close?',
     finish: 'Let\u2019s go',
     skip: 'Skip for now',
+    notificationsTitle: 'Stay in the loop',
+    notificationsBody: 'We\u2019ll let you know when a neighbour writes or answers your request. Missing the reply often means missing the item.',
+    notificationsWhenRequest: 'When someone asks for your item',
+    notificationsWhenAnswer: 'When your request is accepted or declined',
+    notificationsWhenMessage: 'When a new message arrives',
+    notificationsAllow: 'Turn on notifications',
+    notificationsLater: 'Not now',
   },
   request: {
     title: 'Send a request',

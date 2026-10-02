@@ -195,6 +195,13 @@ const tr = {
     radiusLabel: 'Ne kadar yakın?',
     finish: 'Başlayalım',
     skip: 'Şimdilik atla',
+    notificationsTitle: 'Haberin olsun',
+    notificationsBody: 'Bir komşu sana yazınca ya da isteğine cevap verince haber verelim. Cevabı kaçırmak çoğu zaman eşyayı kaçırmak demek.',
+    notificationsWhenRequest: 'Eşyan için istek gelince',
+    notificationsWhenAnswer: 'İsteğin onaylanınca ya da reddedilince',
+    notificationsWhenMessage: 'Yeni bir mesaj gelince',
+    notificationsAllow: 'Bildirimleri aç',
+    notificationsLater: 'Şimdi değil',
   },
   request: {
     title: 'İstek gönder',

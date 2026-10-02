@@ -106,6 +106,8 @@ export default function RootLayout() {
           <Stack.Screen name="auth/otp" options={{ title: '' }} />
           <Stack.Screen name="auth/profile" options={{ title: '', headerBackVisible: false, gestureEnabled: false }} />
           <Stack.Screen name="auth/location" options={{ title: '' }} />
+          {/* The profile is saved by now: no way back into onboarding. */}
+          <Stack.Screen name="auth/notifications" options={{ title: '', headerBackVisible: false, gestureEnabled: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="item/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="item/edit/[id]" options={{ title: t('edit.title') }} />

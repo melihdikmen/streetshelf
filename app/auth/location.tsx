@@ -6,6 +6,7 @@ import { Pressable, View } from 'react-native';
 
 import { AppText, Button, Screen } from '../../src/components';
 import { styles } from '../../src/screens/auth/location.styles';
+import { getPushPermission } from '../../src/services/notifications';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
 
@@ -14,7 +15,8 @@ const RADII = [500, 1000, 2000, 5000] as const;
 /**
  * Location permission plus the default radius, picked from four tappable
  * options rather than a slider: a one-time choice with four sane values.
- * Finishing saves the profile and lands on Discover.
+ * Finishing saves the profile, then asks about notifications if nobody has
+ * yet (a reinstall may already have the answer), else lands on Discover.
  */
 export default function LocationSetupScreen() {
   const { t } = useTranslation();
@@ -33,6 +35,10 @@ export default function LocationSetupScreen() {
     setSaving(true);
     try {
       await completeOnboarding(name, avatar || undefined, radius);
+      if ((await getPushPermission()) === 'undetermined') {
+        router.push('/auth/notifications');
+        return;
+      }
       router.dismissAll();
       router.replace('/(tabs)');
     } catch (error) {
