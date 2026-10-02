@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 
 import i18n from '../i18n';
 import { currentOrigin, FALLBACK_ORIGIN, requestLocation } from '../services/location';
+import { reportUnexpected, setCrashUser } from '../services/crashlytics';
 import { devicePushToken, forgetDeviceToken, watchTokenRefresh } from '../services/notifications';
 import {
   authApi,
@@ -260,6 +261,7 @@ export const useSession = create<SessionState>((set, get) => {
     const userId = session.user.id;
     const onboarded = await authApi.isOnboarded(session.user.user_metadata?.onboarded === true);
     set({ userId, onboarded });
+    setCrashUser(userId);
     const [summary, prefs] = await Promise.all([
       profilesApi.getProfileSummary(userId),
       profilesApi.getMyPreferences(userId),
@@ -286,6 +288,7 @@ export const useSession = create<SessionState>((set, get) => {
 
   /** Back to a clean slate, keeping only device-level preferences. */
   function reset(): void {
+    setCrashUser(null);
     set({
       userId: null,
       onboarded: false,
@@ -431,7 +434,11 @@ export const useSession = create<SessionState>((set, get) => {
     },
 
     showToast: (toast) => set({ toast }),
-    showError: (error) => set({ toast: i18n.t(`errors.codes.${toAppError(error).code}`) }),
+    showError: (error) => {
+      const appError = toAppError(error);
+      reportUnexpected(appError);
+      set({ toast: i18n.t(`errors.codes.${appError.code}`) });
+    },
     clearToast: () => set({ toast: null }),
 
     loadFeed: async (params) => {

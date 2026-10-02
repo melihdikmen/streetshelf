@@ -16,6 +16,7 @@ import { useConnection } from '../src/stores/connection';
 import { useSession } from '../src/stores/session';
 import { DevRouteJumper } from '../src/dev/DevRouteJumper';
 import { useNotificationTaps } from '../src/hooks/useNotificationTaps';
+import { initCrashlytics } from '../src/services/crashlytics';
 import { colors, type as typography } from '../src/theme/tokens';
 
 // Hold the native splash until the font is in; the first frame would
@@ -27,6 +28,9 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 // No native cross-fade: the JS splash underneath is pixel-identical, so an
 // instant swap is invisible, while a fade would briefly show both.
 SplashScreen.setOptions({ fade: false });
+
+// Release builds report crashes from the first moment; debug builds never do.
+initCrashlytics();
 
 /** Routes a signed-out user may be on. */
 const PUBLIC_SEGMENTS = new Set(['welcome', 'auth']);

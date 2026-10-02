@@ -76,6 +76,8 @@
           }
         }
       ],
+      "@react-native-firebase/crashlytics",
+      "./plugins/withFirebasePlistAtProjectRoot",
       "./plugins/withNotificationIcon"
     ],
     "scheme": "streetshelf",

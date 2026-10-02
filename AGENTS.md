@@ -127,8 +127,15 @@ to them. Support address: support@streetshelf.app (Hostinger Mail; DNS is at Hos
   photo on the preview and "Use" retries it (the upload upserts), so a queue only saves the
   photo when the app is closed offline. Build it if users report lost handover photos. Domain
   data is never cached in MMKV.
-- Error and empty states for every network call (the `errors.*` keys exist), Crashlytics or
-  Sentry, analytics events for the funnel (view listing → request → accept → handover).
+- Error and empty states for every network call (the `errors.*` keys exist) and analytics
+  events for the funnel (view listing → request → accept → handover) are still open.
+  **Crashlytics is in** (`src/services/crashlytics.ts`, as in Vouch): release builds only,
+  reports carry the account id and nothing else about the person, and `showError` records
+  `unknown` AppErrors as non-fatals (expected codes are not reported).
+  `plugins/withFirebasePlistAtProjectRoot` keeps the iOS dSYM upload phase from failing. The
+  privacy policy names Firebase (push and crash reports); change both together. Deploy
+  `site/` from a copy outside the repo: Vercel blocks CLI deploys whose git commit author has
+  no linked Git account.
 - Store requirements: block/report, account deletion, the legal pages and the iOS permission
   copy exist.
 - EAS build profiles, TestFlight and internal testing track; a release checklist in
