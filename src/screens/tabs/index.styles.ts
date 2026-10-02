@@ -24,10 +24,18 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  // Takes what the actions leave, so a long neighbourhood name is cut with an
+  // ellipsis instead of pushing the buttons off screen.
+  titleText: {
+    flex: 1,
+    minWidth: 0,
+    marginRight: spacing.sm,
+  },
   titleActions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    flexShrink: 0,
   },
   iconButton: {
     width: 40,

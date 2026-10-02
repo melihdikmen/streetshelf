@@ -43,6 +43,7 @@ export default function DiscoverScreen() {
   const loadFeed = useSession((s) => s.loadFeed);
   const origin = useSession((s) => s.origin);
   const area = useSession((s) => s.me.area);
+  const place = area?.split('·')[0]?.trim();
   const radiusM = useSession((s) => s.searchRadiusM);
   const setRadius = useSession((s) => s.setRadius);
 
@@ -100,12 +101,14 @@ export default function DiscoverScreen() {
     <Screen padded={false}>
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <View>
+          <View style={styles.titleText}>
             <AppText variant="caption" tone="muted">
               {t('discover.title')}
             </AppText>
+            {/* The neighbourhood's name; without a location yet, a generic
+                one rather than repeating the caption and the chip below. */}
             <AppText variant="display" numberOfLines={1}>
-              {area?.split('·')[0]?.trim() || t('discover.here')}
+              {place || t('discover.neighbourhood')}
             </AppText>
           </View>
           <View style={styles.titleActions}>

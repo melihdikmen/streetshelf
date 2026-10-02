@@ -54,7 +54,7 @@ const en: typeof tr = {
     emptyWantedBody: 'Need something? Open the first request.',
     emptyCta: 'Post a listing',
     wantedBadge: 'Wanted',
-    here: 'Near you',
+    neighbourhood: 'Your area',
   },
   item: {
     by: 'Shared by {{name}}',

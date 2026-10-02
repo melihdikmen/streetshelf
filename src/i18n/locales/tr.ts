@@ -51,7 +51,7 @@ const tr = {
     emptyWantedBody: 'İhtiyacın olan bir şey varsa ilk ilanı sen aç.',
     emptyCta: 'İlan ver',
     wantedBadge: 'Arıyor',
-    here: 'Yakınında',
+    neighbourhood: 'Mahallen',
   },
   item: {
     by: '{{name}} paylaşıyor',
