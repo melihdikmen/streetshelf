@@ -211,6 +211,9 @@ insert into conversations (id, item_id, owner_id, requester_id, created_at) valu
   ('e0000000-0000-4000-8000-000000000004', 'c0000000-0000-4000-8000-000000000004', 'a0000000-0000-4000-8000-000000000005', 'a0000000-0000-4000-8000-000000000001', now() - interval '14 days 2 hours');
 
 -- The bump trigger keeps last_message_at in step as these go in.
+-- Seeded history is not news: no pushes for it (0012).
+alter table messages disable trigger messages_queue_push;
+
 insert into messages (conversation_id, sender_id, kind, body, transaction_id, photo_path, created_at) values
   ('e0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'TEXT', 'Merhaba, matkabı hafta sonu 2 günlüğüne alabilir miyim?', null, null, now() - interval '15 hours 1 minute'),
   ('e0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'REQUEST', null, 'd0000000-0000-4000-8000-000000000001', null, now() - interval '15 hours'),
@@ -235,3 +238,12 @@ insert into conversation_reads (conversation_id, user_id, last_read_at) values
   ('e0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', now() - interval '13 hours'),
   ('e0000000-0000-4000-8000-000000000003', 'a0000000-0000-4000-8000-000000000001', now()),
   ('e0000000-0000-4000-8000-000000000004', 'a0000000-0000-4000-8000-000000000001', now());
+
+alter table messages enable trigger messages_queue_push;
+
+-- Where the push trigger sends new messages (0012). Locally pg_net reaches the
+-- functions through the gateway container. The secret is local-only and must
+-- match PUSH_SECRET in supabase/functions/.env.local; production stores its
+-- own two values by hand.
+select vault.create_secret('http://supabase_kong_streetshelf:8000/functions/v1/send-push', 'push_function_url');
+select vault.create_secret('local-push-secret', 'push_function_secret');

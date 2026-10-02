@@ -278,6 +278,8 @@ const en: typeof tr = {
     account: 'Account',
     language: 'Language',
     notifications: 'Notifications',
+    on: 'On',
+    off: 'Off',
     notificationsHint: 'Requests, approvals and messages',
     radius: 'Default distance',
     radiusBody: 'Discover opens with listings within this distance. You can also change it with the distance button on Discover.',

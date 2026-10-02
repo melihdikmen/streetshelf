@@ -28,15 +28,32 @@ screenshot it in the simulator, then connect it to the store.
 
 The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
 
-- **Migrations** `0001`–`0011`: schema, RLS, RPCs, storage, the designed features (multi-group
+- **Migrations** `0001`–`0012`: schema, RLS, RPCs, storage, the designed features (multi-group
   `item_groups`, closed days, reviews, read markers, fuzzed pins), column-level grants that hide
   exact coordinates (`0006`), a trigger that freezes what a SYSTEM line says (`0007`), `reserved_until` for reserved listings (`0008`), and lent-out or rented-out listings leaving
   every feed until they are returned (`0009`, reversing 0008's "keep them visible"), and owner
   edits through `update_item` with type and direction locked (`0010`), and account deletion
-  (`0011`: refused during a handover, groups handed to the longest-standing member). Never
-  edit an applied migration; add the next number.
+  (`0011`: refused during a handover, groups handed to the longest-standing member), and push
+  notifications (`0012`). Never edit an applied migration; add the next number.
 - **Edge functions** `supabase/functions/`: `delete-account` (service role; files through the
-  Storage API, then the auth user, the rest cascades). Locally: `npx supabase functions serve`.
+  Storage API, then the auth user, the rest cascades) and `send-push`. Locally:
+  `npx supabase functions serve`.
+- **Push** (Firebase Messaging, as in Vouch; no EAS or Expo push): every event already writes a
+  message, so one deferred trigger on `messages` queues a pg_net call to `send-push`, which writes
+  the text in each device's language (`push_tokens.locale`) and sends it through FCM HTTP v1 (iOS
+  too, through the APNs key uploaded to Firebase); a request's note rides on its REQUEST card.
+  The trigger reads `push_function_url` and `push_function_secret` from Vault (`seed.sql` stores
+  the local ones; the seed's own messages are not pushed); without them nothing is sent. The
+  function needs `PUSH_SECRET` (same value) and `FCM_SERVICE_ACCOUNT`: locally in
+  `supabase/functions/.env.local` with `npm run functions`, in production via
+  `npx supabase secrets set`. Production Vault, once:
+  `select vault.create_secret('https://<ref>.supabase.co/functions/v1/send-push', 'push_function_url');`
+  and a long random string as `push_function_secret`. Client: `src/services/notifications.ts`;
+  never `expo-notifications` (it fights Firebase over the APNs delegate). Permission is asked
+  after publishing or requesting (or from Settings), never at launch; taps open the thread and a
+  push arriving while the app is open shows as the toast. `GoogleService-Info.plist` and
+  `google-services.json` sit in the project root; `aps-environment` comes from `APS_ENVIRONMENT`
+  at prebuild (`app.config.js`), so a release prebuilds with `APS_ENVIRONMENT=production`.
 - **Tests**: `npm run db:test` runs `supabase/tests/*.test.sql` (pgTAP) against the seed, each
   sensitive rule with a NEGATIVE case. Add one whenever a policy or RPC changes.
 - **Sign-in is email only**: a 6-digit code, never a password or a link. Phone/SMS was removed on
@@ -82,7 +99,7 @@ Rules that are not obvious from the code:
   (hosted), no bare `.env`. **`supabase db reset --linked` wipes production**; only `db push`
   may target it. There is no hosted project yet.
 
-Known gaps carried into Phase 3: push notifications, older-message paging in chat. The website
+Known gaps carried into Phase 3: older-message paging in chat. The website
 (`streetshelf.app`: landing page, TR/EN terms and privacy policy) is static HTML in `site/`,
 deployed with `npx vercel deploy --prod` from that folder; Settings opens the legal pages at
 `LEGAL_BASE_URL` (`src/services/legal.ts`). Keep those paths stable: the store listings link
@@ -91,8 +108,6 @@ to them. Support address: support@streetshelf.app (Hostinger Mail; DNS is at Hos
 
 ## Phase 3 — Hardening and release
 
-- Push notifications (request, accept, message) via Expo push or FCM, driven by DB
-  triggers, with a device-token table and a migration for it.
 - Offline: MMKV session storage (`react-native-mmkv` is installed but unused), a queued
   retry for handover-photo uploads, an offline banner. Domain data is never cached in MMKV.
 - Error and empty states for every network call (the `errors.*` keys exist), Crashlytics or

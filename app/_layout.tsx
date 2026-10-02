@@ -15,6 +15,7 @@ import { AnimatedSplash, OfflineBanner, Toast } from '../src/components';
 import { useConnection } from '../src/stores/connection';
 import { useSession } from '../src/stores/session';
 import { DevRouteJumper } from '../src/dev/DevRouteJumper';
+import { useNotificationTaps } from '../src/hooks/useNotificationTaps';
 import { colors, type as typography } from '../src/theme/tokens';
 
 // Hold the native splash until the font is in; the first frame would
@@ -73,6 +74,7 @@ export default function RootLayout() {
   const finishSplash = useCallback(() => setSplashDone(true), []);
 
   useAuthGuard(ready);
+  useNotificationTaps(ready);
 
   const watchConnection = useConnection((s) => s.watch);
   useEffect(() => watchConnection(), [watchConnection]);

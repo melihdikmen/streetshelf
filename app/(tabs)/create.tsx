@@ -29,6 +29,7 @@ export default function CreateScreen() {
   const groups = useSession((s) => s.groups);
   const publishItem = useSession((s) => s.publishItem);
   const showError = useSession((s) => s.showError);
+  const syncPush = useSession((s) => s.syncPush);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState<string | null>(null);
   // Bumped to remount the form with a blank draft after publishing.
@@ -47,6 +48,8 @@ export default function CreateScreen() {
         groupIds: draft.groupOnly ? draft.groupIds : [],
       });
       setPublished(id);
+      // The moment a neighbour's request becomes something to be told about.
+      void syncPush(true);
     } catch (error) {
       showError(error);
     } finally {

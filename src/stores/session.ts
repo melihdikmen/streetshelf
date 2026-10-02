@@ -1,14 +1,18 @@
 import type { Session } from '@supabase/supabase-js';
 import { create } from 'zustand';
 
+import { Platform } from 'react-native';
+
 import i18n from '../i18n';
 import { currentOrigin, FALLBACK_ORIGIN, requestLocation } from '../services/location';
+import { devicePushToken, forgetDeviceToken, watchTokenRefresh } from '../services/notifications';
 import {
   authApi,
   chatApi,
   groupsApi,
   itemsApi,
   profilesApi,
+  pushApi,
   reviewsApi,
   safetyApi,
   toAppError,
@@ -148,6 +152,12 @@ interface SessionState {
   completeOnboarding: (displayName: string, avatarLocalUri?: string, radiusM?: number) => Promise<void>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<void>;
+  /**
+   * Registers this device for push notifications. With `ask`, shows the
+   * system prompt if the user has not answered it yet; without, only
+   * refreshes a device that is already allowed. Never throws.
+   */
+  syncPush: (ask: boolean) => Promise<void>;
   enableLocation: () => Promise<boolean>;
   setRadius: (radiusM: number) => void;
   showToast: (message: string) => void;
@@ -204,6 +214,24 @@ function previewFor(kind: MessageKind | null, body: string | null): string {
 }
 
 export const useSession = create<SessionState>((set, get) => {
+  /** The token this device registered, so sign-out can take it off the account. */
+  let pushToken: string | null = null;
+  /** Stops following Firebase's token rotations; set while a token is registered. */
+  let stopTokenWatch: (() => void) | null = null;
+
+  /** Saves a (new) token against the signed-in account. */
+  async function registerToken(token: string): Promise<void> {
+    await pushApi.registerPushToken(token, Platform.OS === 'ios' ? 'ios' : 'android', i18n.language);
+    pushToken = token;
+  }
+
+  /** Forgets this device's push registration locally (the server side is handled by the caller). */
+  function dropPush(): void {
+    stopTokenWatch?.();
+    stopTokenWatch = null;
+    pushToken = null;
+  }
+
   /** Fetches any owner profiles not yet cached. */
   async function ensureProfiles(ids: string[]): Promise<void> {
     const cached = get().profiles;
@@ -252,6 +280,8 @@ export const useSession = create<SessionState>((set, get) => {
       safetyApi.getBlockedIds().then((blockedUserIds) => set({ blockedUserIds })),
       reviewsApi.getMyReviewedTransactionIds(userId).then((reviewedTransactionIds) => set({ reviewedTransactionIds })),
     ]).catch(() => undefined);
+    // Tokens can rotate and the app language can change between launches.
+    void get().syncPush(false);
   }
 
   /** Back to a clean slate, keeping only device-level preferences. */
@@ -352,13 +382,37 @@ export const useSession = create<SessionState>((set, get) => {
     },
 
     signOut: async () => {
+      // Before the session goes: unregistering needs it. Best effort, so a
+      // flaky connection never blocks signing out.
+      if (pushToken) await pushApi.unregisterPushToken(pushToken).catch(() => undefined);
+      dropPush();
+      // A fresh token for whoever signs in next; the old one can never be reached again.
+      await forgetDeviceToken();
       await authApi.signOut();
       reset();
     },
 
     deleteAccount: async () => {
+      // The device's token goes with the account (0012 cascades).
       await authApi.deleteAccount();
+      dropPush();
+      await forgetDeviceToken();
       reset();
+    },
+
+    syncPush: async (ask) => {
+      if (!get().userId || Platform.OS === 'web') return;
+      try {
+        const token = await devicePushToken(ask);
+        if (!token) return;
+        await registerToken(token);
+        stopTokenWatch ??= watchTokenRefresh((rotated) => {
+          if (get().userId) void registerToken(rotated).catch(() => undefined);
+        });
+      } catch {
+        // No notifications is a degraded app, not a broken one; the next
+        // launch tries again.
+      }
     },
 
     enableLocation: async () => {

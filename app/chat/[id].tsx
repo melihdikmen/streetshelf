@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionSheetIOS, FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Avatar, ChatComposer, ChatSkeleton, MessageBubble, ModeBadge, TransactionCard } from '../../src/components';
 import { styles } from '../../src/screens/chat/[id].styles';
+import { setOpenThread } from '../../src/services/notifications';
 import { chatApi } from '../../src/services/supabase';
 import { useSession } from '../../src/stores/session';
 import { colors } from '../../src/theme/tokens';
@@ -49,6 +50,14 @@ export default function ChatScreen() {
     scrollTimer.current = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
   }, []);
   useEffect(() => () => clearTimeout(scrollTimer.current), []);
+
+  // While this thread is on screen its pushes would only repeat the list.
+  useFocusEffect(
+    useCallback(() => {
+      setOpenThread(id);
+      return () => setOpenThread(null);
+    }, [id]),
+  );
 
   // Opened from a push or a fresh request, the thread may not be in the list yet.
   useEffect(() => {

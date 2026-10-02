@@ -44,6 +44,7 @@ export default function RequestScreen() {
   const item = useSession((s) => s.itemCache[itemId]);
   const loadUnavailable = useSession((s) => s.loadUnavailable);
   const showError = useSession((s) => s.showError);
+  const syncPush = useSession((s) => s.syncPush);
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
@@ -78,6 +79,8 @@ export default function RequestScreen() {
     setSending(true);
     try {
       setSentTo(await createRequest(item, start, end, note));
+      // The answer comes later; this is when being notified makes sense.
+      void syncPush(true);
     } catch (error) {
       showError(error);
     } finally {

@@ -1,11 +1,12 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, View } from 'react-native';
+import { Alert, AppState, Linking, View } from 'react-native';
 
 import { AppText, Button, Card, ListRow, Screen } from '../src/components';
 import i18n, { setLanguage } from '../src/i18n';
 import { type LegalDocument, openLegal } from '../src/services/legal';
+import { getPushPermission, type PushPermission } from '../src/services/notifications';
 import { styles } from '../src/screens/settings.styles';
 import { useSession } from '../src/stores/session';
 
@@ -19,9 +20,39 @@ export default function SettingsScreen() {
   const deleteMyAccount = useSession((s) => s.deleteAccount);
   const showToast = useSession((s) => s.showToast);
   const showError = useSession((s) => s.showError);
+  const syncPush = useSession((s) => s.syncPush);
   const [deleting, setDeleting] = useState(false);
-  // Two languages, so a tap flips between them; saved across launches.
-  const toggleLanguage = () => setLanguage(i18n.language === 'tr' ? 'en' : 'tr');
+  const [push, setPush] = useState<PushPermission | null>(null);
+
+  // Two languages, so a tap flips between them; saved across launches. The
+  // device is re-registered so notifications switch language too.
+  const toggleLanguage = () => {
+    setLanguage(i18n.language === 'tr' ? 'en' : 'tr');
+    void syncPush(false);
+  };
+
+  // The switch lives in the system settings, so re-read it on focus and when
+  // the user comes back from there.
+  const readPush = useCallback(() => {
+    void getPushPermission().then(setPush);
+  }, []);
+  useFocusEffect(readPush);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') readPush();
+    });
+    return () => subscription.remove();
+  }, [readPush]);
+
+  // Never asked: ask here. Answered either way: only the system can change it.
+  const changePush = async () => {
+    if (push === 'undetermined') {
+      await syncPush(true);
+      readPush();
+    } else {
+      await Linking.openSettings();
+    }
+  };
 
   const doSignOut = async () => {
     try {
@@ -60,8 +91,13 @@ export default function SettingsScreen() {
     <Screen scroll edges={['left', 'right']}>
       <Section title={t('settings.account')}>
         <ListRow icon="translate" label={t('settings.language')} value={i18n.language === 'tr' ? 'Türkçe' : 'English'} onPress={toggleLanguage} />
-        {/* Notification settings return with push (AGENTS.md, Phase 3); a
-            switch that controlled nothing was worse than none. */}
+        <ListRow
+          icon="bell-outline"
+          label={t('settings.notifications')}
+          hint={t('settings.notificationsHint')}
+          value={push === null || push === 'unavailable' ? undefined : push === 'granted' ? t('settings.on') : t('settings.off')}
+          onPress={changePush}
+        />
         <ListRow icon="map-marker-radius-outline" label={t('settings.radius')} value={radius < 1000 ? `${radius} m` : `${radius / 1000} km`} onPress={() => router.push('/radius')} />
       </Section>
 

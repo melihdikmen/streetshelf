@@ -13,8 +13,12 @@
         "NSCameraUsageDescription": "Teslim ve iade anını fotoğraflamak için kamera gerekir.",
         "NSPhotoLibraryUsageDescription": "İlan fotoğrafı seçmek için galeri erişimi gerekir.",
         "NSLocationWhenInUseUsageDescription": "Yakınındaki ilanları göstermek için konumun kullanılır.",
-        "UIViewControllerBasedStatusBarAppearance": true
-      }
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      },
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,8 +32,10 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ]
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -50,8 +56,26 @@
       "expo-image",
       "expo-localization",
       "@react-native-community/datetimepicker",
-      "expo-build-properties",
-      "expo-maps"
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "dynamic"
+          }
+        }
+      ],
+      "expo-maps",
+      "@react-native-firebase/app",
+      [
+        "@react-native-firebase/messaging",
+        {
+          "android": {
+            "notificationIcon": "./assets/notification-icon.png",
+            "notificationColor": "#2E7D4F"
+          }
+        }
+      ],
+      "./plugins/withNotificationIcon"
     ],
     "scheme": "streetshelf",
     "experiments": {

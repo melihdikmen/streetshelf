@@ -275,6 +275,8 @@ const tr = {
     account: 'Hesap',
     language: 'Dil',
     notifications: 'Bildirimler',
+    on: 'Açık',
+    off: 'Kapalı',
     notificationsHint: 'İstek, onay ve mesajlar',
     radius: 'Varsayılan mesafe',
     radiusBody: 'Keşfet ekranı açıldığında bu mesafe içindeki ilanlar gösterilir. Keşfet\u2019teki mesafe düğmesiyle de değiştirebilirsin.',

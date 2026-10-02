@@ -255,6 +255,25 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"push_tokens": {
+                  Row: {
+                    "locale": string,"platform": string,"token": string,"updated_at": string,"user_id": string
+                  }
+                  Insert: {
+                    "locale"?: string,"platform": string,"token": string,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "locale"?: string,"platform"?: string,"token"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "push_tokens_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"reports": {
                   Row: {
                     "created_at": string,"id": string,"item_id": string | null,"reason": string,"reporter_id": string,"user_id": string | null
@@ -587,6 +606,9 @@ isOneToOne: false
               "area": string,"avatar_path": string,"borrowed_count": number,"display_name": string,"id": string,"member_since": string,"rating": number,"review_count": number,"shared_count": number
             }[]
                            },
+"register_push_token":
+{ Args: { "p_locale": string,"p_platform": string,"p_token": string }; Returns: undefined
+                           },
 "request_transaction":
 { Args: { "p_end_date": string,"p_item_id": string,"p_message"?: string,"p_start_date": string }; Returns: {
               "borrower_id": string,
@@ -666,6 +688,9 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"unregister_push_token":
+{ Args: { "p_token": string }; Returns: undefined
+                           },
 "update_item":
 { Args: { "p_description": string,"p_group_ids"?: (string)[],"p_images": (string)[],"p_item_id": string,"p_price_per_day": number,"p_title": string }; Returns: {
               "created_at": string,

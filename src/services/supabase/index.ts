@@ -3,6 +3,7 @@ export * as chatApi from './chat';
 export * as groupsApi from './groups';
 export * as itemsApi from './items';
 export * as profilesApi from './profiles';
+export * as pushApi from './push';
 export * as reviewsApi from './reviews';
 export * as safetyApi from './safety';
 export * as transactionsApi from './transactions';

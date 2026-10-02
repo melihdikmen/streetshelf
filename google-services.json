@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "225282646929",
+    "project_id": "streetshelf-8fef1",
+    "storage_bucket": "streetshelf-8fef1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225282646929:android:d7e96d4b43ab4bad497030",
+        "android_client_info": {
+          "package_name": "com.melihdikmen.streetshelf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYJyGTaxn2NhyIjLKN8jIRP2oN9xtyvAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

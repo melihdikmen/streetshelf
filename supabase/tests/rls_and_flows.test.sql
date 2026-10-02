@@ -8,7 +8,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(54);
+select plan(60);
 
 -- ----------------------------------------------------------------- helpers --
 
@@ -383,6 +383,60 @@ select is(
   array[1, 2, 0, 0],
   'unread counts respect the read markers'
 );
+
+-- ---------------------------------------------------------- push tokens --
+
+select pg_temp.login(:melih);
+select lives_ok(
+  $$ select register_push_token('ExponentPushToken[test-device-1]', 'ios', 'en') $$,
+  'a signed-in user registers a device'
+);
+
+select is(
+  (select count(*)::int from push_tokens),
+  0,
+  'NEGATIVE: nobody reads push tokens directly, not even their own'
+);
+
+select pg_temp.login(:ayse);
+select lives_ok(
+  $$ select unregister_push_token('ExponentPushToken[test-device-1]') $$,
+  'unregistering someone else''s device is a quiet no-op'
+);
+select pg_temp.logout();
+select is(
+  (select user_id from push_tokens where token = 'ExponentPushToken[test-device-1]'),
+  :melih::uuid,
+  'NEGATIVE: another user cannot take a device off someone''s account'
+);
+
+select pg_temp.login(:ayse);
+select register_push_token('ExponentPushToken[test-device-1]', 'ios', 'xx');
+select pg_temp.logout();
+select is(
+  (select (user_id, locale) from push_tokens where token = 'ExponentPushToken[test-device-1]'),
+  (:ayse::uuid, 'tr'::text),
+  'signing in as someone else on the phone moves the device; unknown locales fall back to tr'
+);
+
+-- The push trigger is deferred to commit; forcing it here fires it for the
+-- rows inserted so far. A request's note and card together queue one call.
+create temp table note_and_card (id uuid, kind message_kind);
+with inserted as (
+  insert into messages (conversation_id, sender_id, kind, body, transaction_id) values
+    ('e0000000-0000-4000-8000-000000000002', :ayse, 'TEXT', 'Hafta sonu olur mu?', null),
+    ('e0000000-0000-4000-8000-000000000002', :ayse, 'REQUEST', null, 'd0000000-0000-4000-8000-000000000002')
+  returning id, kind
+)
+insert into note_and_card select id, kind from inserted;
+set constraints messages_queue_push immediate;
+select is(
+  (select array_agg(n.kind) from net.http_request_queue q
+   join note_and_card n on n.id = (convert_from(q.body, 'utf8')::jsonb ->> 'message_id')::uuid),
+  array['REQUEST'::message_kind],
+  'a request with a note queues one push, for the card'
+);
+set constraints messages_queue_push deferred;
 
 -- ------------------------------------------------------- account deletion --
 
