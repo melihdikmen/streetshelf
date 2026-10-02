@@ -8,7 +8,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(60);
+select plan(62);
 
 -- ----------------------------------------------------------------- helpers --
 
@@ -383,6 +383,24 @@ select is(
   array[1, 2, 0, 0],
   'unread counts respect the read markers'
 );
+
+-- ------------------------------------------------------------ signed out --
+
+select pg_temp.logout();
+select set_config('role', 'anon', true);
+select throws_ok(
+  $$ select location from items limit 1 $$,
+  '42501',
+  null,
+  'NEGATIVE: signed out, exact listing locations cannot even be selected'
+);
+select throws_ok(
+  $$ select home_location from profiles limit 1 $$,
+  '42501',
+  null,
+  'NEGATIVE: signed out, home locations cannot even be selected'
+);
+select pg_temp.logout();
 
 -- ---------------------------------------------------------- push tokens --
 

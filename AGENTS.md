@@ -28,13 +28,14 @@ screenshot it in the simulator, then connect it to the store.
 
 The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
 
-- **Migrations** `0001`–`0012`: schema, RLS, RPCs, storage, the designed features (multi-group
+- **Migrations** `0001`–`0013`: schema, RLS, RPCs, storage, the designed features (multi-group
   `item_groups`, closed days, reviews, read markers, fuzzed pins), column-level grants that hide
   exact coordinates (`0006`), a trigger that freezes what a SYSTEM line says (`0007`), `reserved_until` for reserved listings (`0008`), and lent-out or rented-out listings leaving
   every feed until they are returned (`0009`, reversing 0008's "keep them visible"), and owner
   edits through `update_item` with type and direction locked (`0010`), and account deletion
   (`0011`: refused during a handover, groups handed to the longest-standing member), and push
-  notifications (`0012`). Never edit an applied migration; add the next number.
+  notifications (`0012`), and no privileges at all for the anon role on `items` and `profiles`
+  (`0013`). Never edit an applied migration; add the next number.
 - **Edge functions** `supabase/functions/`: `delete-account` (service role; files through the
   Storage API, then the auth user, the rest cascades) and `send-push`. Locally:
   `npx supabase functions serve`.
@@ -103,7 +104,7 @@ Rules that are not obvious from the code:
 - Environments follow Vouch: `.env.local` (local stack, LAN IP) and `.env.production`
   (hosted), no bare `.env`. **`supabase db reset --linked` wipes production**; only `db push`
   may target it. The hosted project is `svdcltwtiidvaoevdoxn` (Frankfurt, free plan, created
-  2026-10-02, linked): migrations 0001–0012 pushed (never the seed), both edge functions
+  2026-10-02, linked): migrations pushed (never the seed), both edge functions
   deployed with `PUSH_SECRET` and `FCM_SERVICE_ACCOUNT` set, Vault holds the push URL and
   secret, auth is email OTP with 6 digits and `site_url` https://streetshelf.app. The DB password
   and push secret are in the macOS Keychain (`streetshelf-supabase-db`,
