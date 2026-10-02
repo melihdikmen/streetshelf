@@ -9,6 +9,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.melihdikmen.streetshelf",
+      "appleTeamId": "66B7T6P33V",
       "infoPlist": {
         "NSCameraUsageDescription": "Teslim ve iade anını fotoğraflamak için kamera gerekir.",
         "NSPhotoLibraryUsageDescription": "İlan fotoğrafı seçmek için galeri erişimi gerekir.",

@@ -54,6 +54,11 @@ The app runs on Supabase end to end; `src/mock/` is gone. What exists and why:
   push arriving while the app is open shows as the toast. `GoogleService-Info.plist` and
   `google-services.json` sit in the project root; `aps-environment` comes from `APS_ENVIRONMENT`
   at prebuild (`app.config.js`), so a release prebuilds with `APS_ENVIRONMENT=production`.
+  Simulators cannot get an FCM token (RNFB skips APNs on ARM64 simulators): test the app side
+  with `xcrun simctl push`, real delivery on a phone. Signing team is `66B7T6P33V` (the APNs key
+  in Firebase must belong to it, or Apple answers InvalidProviderToken); if a device build picks
+  the wildcard profile, build once with `xcodebuild ... -allowProvisioningUpdates` so Xcode
+  registers the App ID with Push.
 - **Tests**: `npm run db:test` runs `supabase/tests/*.test.sql` (pgTAP) against the seed, each
   sensitive rule with a NEGATIVE case. Add one whenever a policy or RPC changes.
 - **Sign-in is email only**: a 6-digit code, never a password or a link. Phone/SMS was removed on
