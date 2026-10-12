@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://streetshelf.app/</loc>
+    <lastmod>2026-10-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://streetshelf.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://streetshelf.app/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://streetshelf.app/"/>
+  </url>
+  <url>
+    <loc>https://streetshelf.app/en</loc>
+    <lastmod>2026-10-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://streetshelf.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://streetshelf.app/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://streetshelf.app/"/>
+  </url>
+  <url>
+    <loc>https://streetshelf.app/tr/terms</loc>
+    <lastmod>2026-10-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://streetshelf.app/tr/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://streetshelf.app/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://streetshelf.app/tr/terms"/>
+  </url>
+  <url>
+    <loc>https://streetshelf.app/en/terms</loc>
+    <lastmod>2026-10-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://streetshelf.app/tr/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://streetshelf.app/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://streetshelf.app/tr/terms"/>
+  </url>
+  <url>
+    <loc>https://streetshelf.app/tr/privacy</loc>
+    <lastmod>2026-10-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://streetshelf.app/tr/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://streetshelf.app/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://streetshelf.app/tr/privacy"/>
+  </url>
+  <url>
+    <loc>https://streetshelf.app/en/privacy</loc>
+    <lastmod>2026-10-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://streetshelf.app/tr/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://streetshelf.app/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://streetshelf.app/tr/privacy"/>
+  </url>
+</urlset>

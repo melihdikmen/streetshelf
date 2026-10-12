@@ -3,23 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>StreetShelf</title>
-  <meta name="description" content="Komşundan kirala, ödünç al ya da hediye et. Rent, borrow or gift with your neighbours.">
+  <title>StreetShelf · Komşunla Ödünç Ver, Hediye Et, Kirala</title>
+  <meta name="description" content="Komşunla eşya paylaş: ihtiyacını ödünç al, kullanmadığını hediye et ya da kirala. Matkaptan kamp çadırına, yılda bir lazım olanı yakınındaki komşunda bul.">
+  <link rel="canonical" href="https://streetshelf.app/">
+  <link rel="alternate" hreflang="tr" href="https://streetshelf.app/">
+  <link rel="alternate" hreflang="en" href="https://streetshelf.app/en">
+  <link rel="alternate" hreflang="x-default" href="https://streetshelf.app/">
+  <meta name="theme-color" content="#F7F5F0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141A16" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="StreetShelf">
+  <meta property="og:url" content="https://streetshelf.app/">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:title" content="StreetShelf · Komşunla Ödünç Ver, Hediye Et, Kirala">
+  <meta property="og:description" content="Komşunla eşya paylaş: ihtiyacını ödünç al, kullanmadığını hediye et ya da kirala. Matkaptan kamp çadırına, yılda bir lazım olanı yakınındaki komşunda bul.">
+  <meta property="og:image" content="https://streetshelf.app/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="StreetShelf">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="StreetShelf · Komşunla Ödünç Ver, Hediye Et, Kirala">
+  <meta name="twitter:description" content="Komşunla eşya paylaş: ihtiyacını ödünç al, kullanmadığını hediye et ya da kirala. Matkaptan kamp çadırına, yılda bir lazım olanı yakınındaki komşunda bul.">
+  <meta name="twitter:image" content="https://streetshelf.app/og.png">
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Organization", "@id": "https://streetshelf.app/#organization", "name": "StreetShelf", "url": "https://streetshelf.app/", "logo": "https://streetshelf.app/icon.png", "email": "support@streetshelf.app"}, {"@context": "https://schema.org", "@type": "WebSite", "@id": "https://streetshelf.app/#website", "name": "StreetShelf", "url": "https://streetshelf.app/", "inLanguage": ["tr", "en"], "publisher": {"@id": "https://streetshelf.app/#organization"}}, {"@context": "https://schema.org", "@type": "FAQPage", "inLanguage": "tr", "url": "https://streetshelf.app/", "mainEntity": [{"@type": "Question", "name": "Komşumdan nasıl ödünç alırım?", "acceptedAnswer": {"@type": "Answer", "text": "Yakınındaki ya da grubundaki ilanlara bak, istediğin eşyada tarihleri seçip kısa bir notla istek gönder. Komşun onaylayınca uygulama içinde yazışıp buluşma yerini ayarlarsınız. Teslim ve iade anı fotoğrafla kayıt altına alınır."}}, {"@type": "Question", "name": "StreetShelf ücretsiz mi?", "acceptedAnswer": {"@type": "Answer", "text": "Evet, uygulamayı kullanmak ücretsiz; üyelik ya da komisyon yok. Hediye ve ödünç tamamen ücretsizdir. Kiralık ilanlarda günlük ücreti eşyanın sahibi belirler."}}, {"@type": "Question", "name": "Konumum başkalarına görünür mü?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır. Tam adresin ya da konumun kimseye gösterilmez. Diğer kullanıcılar yalnızca yaklaşık mesafeyi ve haritada 100 metre civarındaki bir bölgeyi görür."}}, {"@type": "Question", "name": "Kiralık eşyalarda ödeme nasıl yapılır?", "acceptedAnswer": {"@type": "Answer", "text": "Ücret teslimde elden ödenir. Uygulama içinde ödeme alınmaz, para akışı yoktur."}}]}]</script>
   <link rel="icon" href="/favicon.png">
+  <link rel="preload" href="/fonts/jakarta-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<main class="hero">
-  <img src="/icon.png" alt="StreetShelf">
-  <h1>StreetShelf</h1>
-  <p class="tagline">Komşundan kirala, ödünç al ya da hediye et.<br>Rent, borrow or gift with your neighbours.</p>
-  <p class="soon">Yakında App Store ve Google Play'de · Coming soon</p>
-
+<div class="land">
+<div class="wrap">
+  <nav><a class="brand" href="/"><img src="/icon.png" alt="StreetShelf" width="32" height="32">StreetShelf</a><a class="alt" href="/en">English</a></nav>
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="chips"><span class="chip gift">Hediye</span><span class="chip lend">Ödünç</span><span class="chip rent">Kiralık</span></div>
+      <h1>Her şeyi almak zorunda değilsin. Komşunda var.</h1>
+      <p class="lead">Matkap, kamp çadırı, çocuk bisikleti… Yılda bir kez lazım olanı komşundan ödünç al; kendi eşyalarını hediye et, ödünç ver ya da kiralık olarak paylaş.</p>
+      <div class="stores"><span class="store"><small>Yakında</small><b>App Store</b></span><span class="store"><small>Yakında</small><b>Google Play</b></span></div>
+      <p class="hero-note">Ücretsiz. Şifre yok: e-postana gelen 6 haneli kodla girersin.</p>
+    </div>
+    <div class="hero-phones">
+      <div class="phone front"><img src="/img/tr/01-360.webp" srcset="/img/tr/01-360.webp 360w, /img/tr/01-540.webp 540w, /img/tr/01-720.webp 720w" sizes="(min-width: 860px) 264px, 174px" width="360" height="782" alt="Keşfet ekranı: yakındaki hediye, ödünç ve kiralık ilanlar" fetchpriority="high" decoding="async"></div>
+      <div class="phone back"><img src="/img/tr/02-360.webp" srcset="/img/tr/02-360.webp 360w, /img/tr/02-540.webp 540w, /img/tr/02-720.webp 720w" sizes="(min-width: 860px) 230px, 150px" width="360" height="782" alt="Hediye ilanı detayı" loading="lazy" decoding="async"></div>
+    </div>
+  </header>
+</div>
+<main class="wrap">
+  <section class="section" aria-labelledby="modes">
+    <div class="section-head"><h2 id="modes">Üç şekilde paylaş</h2><p>Her ilan bir renkle gelir; neyin hediye, neyin ödünç, neyin kiralık olduğunu bir bakışta görürsün.</p></div>
+    <div class="modes"><article class="mode gift"><div class="mode-copy"><span class="tag">Hediye</span><h3>Hediye et</h3><p>Artık kullanmadığın şey çöpe değil, komşuna gitsin.</p><ul><li>İhtiyacını "aranıyor" olarak da yayınlayabilirsin.</li><li>Teslim gününü seçip sohbette buluşursunuz.</li></ul></div><div class="mode-shot"><div class="phone "><img src="/img/tr/02-360.webp" srcset="/img/tr/02-360.webp 360w, /img/tr/02-540.webp 540w, /img/tr/02-720.webp 720w" sizes="(min-width: 860px) 274px, 214px" width="360" height="782" alt="Hediye ilanı detayı" loading="lazy" decoding="async"></div></div></article><article class="mode lend"><div class="mode-copy"><span class="tag">Ödünç</span><h3>Ödünç ver</h3><p>Matkabı bir hafta ver, geri al. Yılda bir lazım olan şeyi kimse satın almak zorunda kalmasın.</p><ul><li>Tarihleri komşun seçer, sen onaylarsın.</li><li>Teslim ve iade anı fotoğrafla kayda geçer.</li></ul></div><div class="mode-shot"><div class="phone "><img src="/img/tr/03-360.webp" srcset="/img/tr/03-360.webp 360w, /img/tr/03-540.webp 540w, /img/tr/03-720.webp 720w" sizes="(min-width: 860px) 274px, 214px" width="360" height="782" alt="Ödünç ilanı detayı" loading="lazy" decoding="async"></div></div></article><article class="mode rent"><div class="mode-copy"><span class="tag">Kiralık</span><h3>Kirala</h3><p>Günlük ücreti sen belirle; eşyan boş dururken işe yarasın.</p><ul><li>Ödeme teslimde elden yapılır.</li><li>Uygulama içinde para akışı ya da komisyon yok.</li></ul></div><div class="mode-shot"><div class="phone "><img src="/img/tr/04-360.webp" srcset="/img/tr/04-360.webp 360w, /img/tr/04-540.webp 540w, /img/tr/04-720.webp 720w" sizes="(min-width: 860px) 274px, 214px" width="360" height="782" alt="Kiralık ilanı detayı: günlük ücret" loading="lazy" decoding="async"></div></div></article></div>
+  </section>
+  <section class="section" aria-labelledby="how">
+    <div class="section-head"><h2 id="how">Nasıl çalışır?</h2><p>İlandan teslime kadar her adım uygulamanın içinde.</p></div>
+    <ol class="steps"><li><div class="phone "><img src="/img/tr/01-360.webp" srcset="/img/tr/01-360.webp 360w, /img/tr/01-540.webp 540w, /img/tr/01-720.webp 720w" sizes="(min-width: 860px) 194px, 40vw" width="360" height="782" alt="Keşfet ekranı: yakındaki hediye, ödünç ve kiralık ilanlar" loading="lazy" decoding="async"></div><h3>İlan ver ya da ara</h3><p>Fotoğraf çek, ne olduğunu yaz ya da yakınındaki ilanlara bak.</p></li><li><div class="phone "><img src="/img/tr/05-360.webp" srcset="/img/tr/05-360.webp 360w, /img/tr/05-540.webp 540w, /img/tr/05-720.webp 720w" sizes="(min-width: 860px) 194px, 40vw" width="360" height="782" alt="Talep ekranı: tarih, toplam ücret ve elden ödeme notu" loading="lazy" decoding="async"></div><h3>Tarihi seç, talep et</h3><p>Kısa bir notla istek gönder; komşun onaylar.</p></li><li><div class="phone "><img src="/img/tr/06-360.webp" srcset="/img/tr/06-360.webp 360w, /img/tr/06-540.webp 540w, /img/tr/06-720.webp 720w" sizes="(min-width: 860px) 194px, 40vw" width="360" height="782" alt="Sohbet: talep ve onay kartları" loading="lazy" decoding="async"></div><h3>Sohbette buluşun</h3><p>Buluşma yerini uygulamanın içinde ayarlayın.</p></li><li><div class="phone "><img src="/img/tr/08-360.webp" srcset="/img/tr/08-360.webp 360w, /img/tr/08-540.webp 540w, /img/tr/08-720.webp 720w" sizes="(min-width: 860px) 194px, 40vw" width="360" height="782" alt="Sohbette teslim fotoğrafı kartı" loading="lazy" decoding="async"></div><h3>Teslimi fotoğrafla</h3><p>Teslim ve iadeyi fotoğrafla, sonra birbirinizi değerlendirin.</p></li></ol>
+  </section>
+  <section class="privacy" aria-labelledby="privacy">
+    <div class="privacy-shot"><div class="phone "><img src="/img/tr/07-360.webp" srcset="/img/tr/07-360.webp 360w, /img/tr/07-540.webp 540w, /img/tr/07-720.webp 720w" sizes="(min-width: 860px) 274px, 214px" width="360" height="782" alt="Harita: ilanlar yaklaşık konumlarıyla" loading="lazy" decoding="async"></div><span class="pin-note"><i aria-hidden="true"></i>Yaklaşık konum: ~100 m</span></div>
+    <div><h2 id="privacy">Konumun gizli kalır</h2><p class="muted">Tam adresin hiçbir zaman gösterilmez. Haritadaki iğne evini değil, yaklaşık 100 metre içinde kaydırılmış bir noktayı gösterir.</p><ul class="facts"><li><b>Yarıçapını sen seç</b><span>Yalnızca belirlediğin mesafedeki ilanları görürsün.</span></li><li><b>Kapalı gruplar</b><span>Apartman, site ya da iş yeri için davet kodlu grup kur; yalnızca üyeler görsün.</span></li><li><b>Engelle ve şikâyet et</b><span>İstemediğin kişiyi engelle, uygunsuz ilanı bildir.</span></li></ul></div>
+  </section>
+  <section class="faq section" id="sss"><h2>Sıkça sorulan sorular</h2><details><summary>Komşumdan nasıl ödünç alırım?</summary><p>Yakınındaki ya da grubundaki ilanlara bak, istediğin eşyada tarihleri seçip kısa bir notla istek gönder. Komşun onaylayınca uygulama içinde yazışıp buluşma yerini ayarlarsınız. Teslim ve iade anı fotoğrafla kayıt altına alınır.</p></details><details><summary>StreetShelf ücretsiz mi?</summary><p>Evet, uygulamayı kullanmak ücretsiz; üyelik ya da komisyon yok. Hediye ve ödünç tamamen ücretsizdir. Kiralık ilanlarda günlük ücreti eşyanın sahibi belirler.</p></details><details><summary>Konumum başkalarına görünür mü?</summary><p>Hayır. Tam adresin ya da konumun kimseye gösterilmez. Diğer kullanıcılar yalnızca yaklaşık mesafeyi ve haritada 100 metre civarındaki bir bölgeyi görür.</p></details><details><summary>Kiralık eşyalarda ödeme nasıl yapılır?</summary><p>Ücret teslimde elden ödenir. Uygulama içinde ödeme alınmaz, para akışı yoktur.</p></details></section>
+  <section class="band"><h2>Komşuluk geri geliyor</h2><p>StreetShelf çıkışa hazırlanıyor. Sorularınız ve önerileriniz için support@streetshelf.app adresine yazabilirsiniz.</p><div class="stores"><span class="store"><small>Yakında</small><b>App Store</b></span><span class="store"><small>Yakında</small><b>Google Play</b></span></div></section>
+</main>
+<div class="wrap">
   <footer>
     <a href="/tr/terms">Kullanım Koşulları</a> · <a href="/tr/privacy">Gizlilik Politikası</a><br>
     <a href="/en/terms">Terms of Use</a> · <a href="/en/privacy">Privacy Policy</a><br>
     <a href="mailto:support@streetshelf.app">support@streetshelf.app</a>
   </footer>
-</main>
+</div>
+</div>
 </body>
 </html>
