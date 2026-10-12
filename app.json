@@ -19,7 +19,8 @@
           "remote-notification"
         ]
       },
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -36,7 +37,8 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.POST_NOTIFICATIONS"
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -78,7 +80,8 @@
       ],
       "@react-native-firebase/crashlytics",
       "./plugins/withFirebasePlistAtProjectRoot",
-      "./plugins/withNotificationIcon"
+      "./plugins/withNotificationIcon",
+      "./plugins/withReleaseSigning"
     ],
     "scheme": "streetshelf",
     "experiments": {

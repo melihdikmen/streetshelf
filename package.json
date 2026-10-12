@@ -62,7 +62,9 @@
     "db:reset": "npx supabase db reset",
     "postinstall": "patch-package",
     "db:test": "npx supabase test db",
-    "functions": "npx supabase functions serve --env-file supabase/functions/.env.local"
+    "functions": "npx supabase functions serve --env-file supabase/functions/.env.local",
+    "release:android": "bash scripts/release-android.sh",
+    "release:ios": "bash scripts/release-ios.sh"
   },
   "private": true
 }
