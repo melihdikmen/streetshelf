@@ -27,6 +27,7 @@ export type Database = {
                   Row: {
                     "blocked_id": string,"blocker_id": string,"created_at": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "blocked_id": string,"blocker_id": string,"created_at"?: string
                   }
@@ -52,6 +53,7 @@ isOneToOne: false
                   Row: {
                     "conversation_id": string,"last_read_at": string,"user_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "conversation_id": string,"last_read_at"?: string,"user_id": string
                   }
@@ -77,6 +79,7 @@ isOneToOne: false
                   Row: {
                     "created_at": string,"id": string,"item_id": string,"last_message_at": string,"owner_id": string,"requester_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "created_at"?: string,"id"?: string,"item_id": string,"last_message_at"?: string,"owner_id": string,"requester_id": string
                   }
@@ -108,6 +111,7 @@ isOneToOne: false
                   Row: {
                     "group_id": string,"joined_at": string,"role": Database["public"]['Enums']["group_role"],"user_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "group_id": string,"joined_at"?: string,"role"?: Database["public"]['Enums']["group_role"],"user_id": string
                   }
@@ -133,6 +137,7 @@ isOneToOne: false
                   Row: {
                     "created_at": string,"created_by": string,"id": string,"invite_code": string,"name": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "created_at"?: string,"created_by": string,"id"?: string,"invite_code": string,"name": string
                   }
@@ -152,6 +157,7 @@ isOneToOne: false
                   Row: {
                     "group_id": string,"item_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "group_id": string,"item_id": string
                   }
@@ -177,6 +183,7 @@ isOneToOne: false
                   Row: {
                     "day": string,"item_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "day": string,"item_id": string
                   }
@@ -196,6 +203,7 @@ isOneToOne: false
                   Row: {
                     "created_at": string,"currency": string,"description": string,"id": string,"images": (string)[],"is_group_only": boolean,"item_type": Database["public"]['Enums']["item_type"],"location": unknown,"owner_id": string,"price_per_day": number | null,"request_type": Database["public"]['Enums']["request_type"],"status": Database["public"]['Enums']["item_status"],"title": string,"updated_at": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "created_at"?: string,"currency"?: string,"description"?: string,"id"?: string,"images"?: (string)[],"is_group_only"?: boolean,"item_type": Database["public"]['Enums']["item_type"],"location": unknown,"owner_id": string,"price_per_day"?: number | null,"request_type": Database["public"]['Enums']["request_type"],"status"?: Database["public"]['Enums']["item_status"],"title": string,"updated_at"?: string
                   }
@@ -215,6 +223,7 @@ isOneToOne: false
                   Row: {
                     "body": string | null,"conversation_id": string,"created_at": string,"id": string,"kind": Database["public"]['Enums']["message_kind"],"photo_path": string | null,"sender_id": string | null,"transaction_id": string | null
                   }
+                  ComputedFields: never
                   Insert: {
                     "body"?: string | null,"conversation_id": string,"created_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["message_kind"],"photo_path"?: string | null,"sender_id"?: string | null,"transaction_id"?: string | null
                   }
@@ -246,6 +255,7 @@ isOneToOne: false
                   Row: {
                     "area": string | null,"avatar_path": string | null,"created_at": string,"display_name": string,"home_location": unknown,"id": string,"search_radius_m": number,"updated_at": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "area"?: string | null,"avatar_path"?: string | null,"created_at"?: string,"display_name": string,"home_location"?: unknown,"id": string,"search_radius_m"?: number,"updated_at"?: string
                   }
@@ -259,6 +269,7 @@ isOneToOne: false
                   Row: {
                     "locale": string,"platform": string,"token": string,"updated_at": string,"user_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "locale"?: string,"platform": string,"token": string,"updated_at"?: string,"user_id": string
                   }
@@ -276,13 +287,14 @@ isOneToOne: false
                   ]
                 },"reports": {
                   Row: {
-                    "created_at": string,"id": string,"item_id": string | null,"reason": string,"reporter_id": string,"user_id": string | null
+                    "created_at": string,"id": string,"item_id": string | null,"reason": string,"reported_item_id": string | null,"reported_user_id": string | null,"reporter_id": string,"user_id": string | null
                   }
+                  ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"id"?: string,"item_id"?: string | null,"reason": string,"reporter_id": string,"user_id"?: string | null
+                    "created_at"?: string,"id"?: string,"item_id"?: string | null,"reason": string,"reported_item_id"?: string | null,"reported_user_id"?: string | null,"reporter_id": string,"user_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"id"?: string,"item_id"?: string | null,"reason"?: string,"reporter_id"?: string,"user_id"?: string | null
+                    "created_at"?: string,"id"?: string,"item_id"?: string | null,"reason"?: string,"reported_item_id"?: string | null,"reported_user_id"?: string | null,"reporter_id"?: string,"user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -305,10 +317,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"review_login_attempts": {
+                  Row: {
+                    "attempted_at": string,"id": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attempted_at"?: string,"id"?: never
+                  }
+                  Update: {
+                    "attempted_at"?: string,"id"?: never
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"reviews": {
                   Row: {
                     "comment": string | null,"created_at": string,"from_id": string,"id": string,"rating": number,"tags": (string)[],"to_id": string,"transaction_id": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "comment"?: string | null,"created_at"?: string,"from_id": string,"id"?: string,"rating": number,"tags"?: (string)[],"to_id": string,"transaction_id": string
                   }
@@ -340,6 +367,7 @@ isOneToOne: false
                   Row: {
                     "borrower_id": string,"created_at": string,"currency": string,"delivered_at": string | null,"end_date": string,"id": string,"initiated_by": string,"item_id": string,"owner_id": string,"payment_status": Database["public"]['Enums']["payment_status"],"pickup_photo_path": string | null,"price_per_day_snapshot": number | null,"responded_at": string | null,"return_photo_path": string | null,"returned_at": string | null,"start_date": string,"status": Database["public"]['Enums']["transaction_status"],"total_amount": number,"updated_at": string
                   }
+                  ComputedFields: never
                   Insert: {
                     "borrower_id": string,"created_at"?: string,"currency"?: string,"delivered_at"?: string | null,"end_date": string,"id"?: string,"initiated_by": string,"item_id": string,"owner_id": string,"payment_status"?: Database["public"]['Enums']["payment_status"],"pickup_photo_path"?: string | null,"price_per_day_snapshot"?: number | null,"responded_at"?: string | null,"return_photo_path"?: string | null,"returned_at"?: string | null,"start_date": string,"status"?: Database["public"]['Enums']["transaction_status"],"total_amount"?: number,"updated_at"?: string
                   }
@@ -380,6 +408,7 @@ isOneToOne: false
                   Row: {
                     "rating": number | null,"review_count": number | null,"user_id": string | null
                   }
+                  ComputedFields: never
                   Relationships: [
                     {
       foreignKeyName: "reviews_to_id_fkey"
@@ -392,7 +421,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "can_see_via_group":
+            "archive_item":
+{ Args: { "p_item_id": string }; Returns: undefined
+                           },
+"can_see_via_group":
 { Args: { "p_item_id": string }; Returns: boolean
                            },
 "cancel_transaction":

@@ -3,6 +3,14 @@ import { FunctionsHttpError, type Session } from '@supabase/supabase-js';
 import { supabase } from './client';
 import { toAppError } from './errors';
 
+/**
+ * The one address the app stores' reviewers sign in with. They cannot read an
+ * inbox, so for this address no email is sent and the code goes to the
+ * `review-login` edge function instead. The code lives only in that function's
+ * secrets; the address alone opens nothing.
+ */
+const REVIEW_EMAIL = 'review@streetshelf.app';
+
 /** Lower-cased, trimmed address; GoTrue compares emails case-sensitively. */
 export function normaliseEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -15,6 +23,7 @@ export function normaliseEmail(email: string): string {
  * lands in Mailpit.
  */
 export async function sendOtp(email: string): Promise<void> {
+  if (normaliseEmail(email) === REVIEW_EMAIL) return;
   const { error } = await supabase.auth.signInWithOtp({
     email: normaliseEmail(email),
     options: { shouldCreateUser: true },
@@ -28,9 +37,28 @@ export async function sendOtp(email: string): Promise<void> {
  * @returns The new session.
  */
 export async function verifyOtp(email: string, code: string): Promise<Session> {
+  if (normaliseEmail(email) === REVIEW_EMAIL) return reviewLogin(code);
   const { data, error } = await supabase.auth.verifyOtp({ email: normaliseEmail(email), token: code, type: 'email' });
   if (error || !data.session) throw toAppError(error ?? 'invalid_otp');
   return data.session;
+}
+
+/** Signs the reviewer address in through the edge function; any refusal reads as a wrong code. */
+async function reviewLogin(code: string): Promise<Session> {
+  const { data, error } = await supabase.functions.invoke('review-login', {
+    method: 'POST',
+    body: { email: REVIEW_EMAIL, code },
+  });
+  if (error) {
+    if (error instanceof FunctionsHttpError) throw toAppError('invalid_otp');
+    throw toAppError(error);
+  }
+  const { data: set, error: setError } = await supabase.auth.setSession({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+  });
+  if (setError || !set.session) throw toAppError(setError ?? 'invalid_otp');
+  return set.session;
 }
 
 /** The persisted session, if any; read from MMKV synchronously under the hood. */

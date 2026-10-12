@@ -1,10 +1,10 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Avatar, Card, ItemCard, ItemGridSkeleton, ListRow, Screen, StarRating } from '../../src/components';
+import { AppText, Avatar, Card, EmptyState, ItemCard, ItemGridSkeleton, ListRow, Screen, StarRating } from '../../src/components';
 import { useGridCellWidth } from '../../src/hooks/useGridCellWidth';
 import { styles } from '../../src/screens/tabs/profile.styles';
 import { useSession } from '../../src/stores/session';
@@ -28,14 +28,37 @@ export default function ProfileScreen() {
   const loadMyItems = useSession((s) => s.loadMyItems);
   const loadProfile = useSession((s) => s.loadProfile);
   const loadTransactions = useSession((s) => s.loadTransactions);
+  const showError = useSession((s) => s.showError);
+  // Only matters before the first successful load: without it a failed first
+  // load (offline launch) would leave the skeleton on screen forever.
+  const [failed, setFailed] = useState(false);
+
+  /** Reloads listings, stats and activity; `isCurrent` drops a late answer after blur. */
+  const load = useCallback(
+    (isCurrent: () => boolean = () => true) => {
+      if (!me.id) return;
+      setFailed(false);
+      Promise.all([loadMyItems(), loadProfile(me.id), loadTransactions()]).catch((error: unknown) => {
+        if (!isCurrent()) return;
+        setFailed(true);
+        showError(error);
+      });
+    },
+    [loadMyItems, loadProfile, loadTransactions, me.id, showError],
+  );
+  const retry = useCallback(() => load(), [load]);
+  const openCreate = useCallback(() => router.push('/(tabs)/create'), [router]);
 
   // Own listings, stats and activity count change from other screens (a new
   // listing, a finished handover), so this reloads each time it is shown.
   useFocusEffect(
     useCallback(() => {
-      if (!me.id) return;
-      void Promise.all([loadMyItems(), loadProfile(me.id), loadTransactions()]).catch(() => undefined);
-    }, [loadMyItems, loadProfile, loadTransactions, me.id]),
+      let current = true;
+      load(() => current);
+      return () => {
+        current = false;
+      };
+    }, [load]),
   );
   const activeCount = useSession(
     (s) => s.transactions.filter((tx) => ['PENDING', 'ACCEPTED', 'DELIVERED'].includes(tx.status)).length,
@@ -85,7 +108,16 @@ export default function ProfileScreen() {
       <AppText variant="title" style={styles.sectionTitle}>
         {t('profile.myItems')}
       </AppText>
-      {!itemsLoaded && myItems.length === 0 ? <ItemGridSkeleton cellWidth={cellWidth} count={2} /> : null}
+      {!itemsLoaded && myItems.length === 0 ? (
+        failed ? (
+          <EmptyState icon="wifi-off" title={t('errors.title')} body={t('errors.body')} ctaLabel={t('errors.retry')} onCta={retry} />
+        ) : (
+          <ItemGridSkeleton cellWidth={cellWidth} count={2} />
+        )
+      ) : null}
+      {itemsLoaded && myItems.length === 0 ? (
+        <EmptyState icon="package-variant" title={t('profile.emptyItemsTitle')} body={t('profile.emptyItemsBody')} ctaLabel={t('discover.emptyCta')} onCta={openCreate} />
+      ) : null}
       <View style={styles.grid}>
         {myItems.map((item) => (
           <View key={item.id} style={item.requestType === 'WANTED' ? styles.gridRow : styles.gridCell}>

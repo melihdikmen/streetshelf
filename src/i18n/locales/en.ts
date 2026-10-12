@@ -146,6 +146,8 @@ const en: typeof tr = {
   profile: {
     title: 'Profile',
     myItems: 'My listings',
+    emptyItemsTitle: 'No listings yet',
+    emptyItemsBody: 'Gift, lend or rent out something you are not using, so your neighbours can see it.',
     myGroups: 'My groups',
     joinGroup: 'Join with invite code',
     createGroup: 'Create a group',
@@ -361,6 +363,7 @@ const en: typeof tr = {
       already_reviewed: 'You already rated this handover.',
       not_finished: 'You can rate once the handover is complete.',
       upload_failed: 'The photo did not upload, try again.',
+      invalid_location: 'The location is not valid, pick it again.',
       active_transactions: 'You have a handover in progress. Once the item is back or the request is cancelled, you can delete your account.',
       unknown: 'Something went wrong, try again.',
     },

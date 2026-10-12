@@ -219,7 +219,7 @@ export async function updateItem(userId: string, itemId: string, edits: ItemEdit
 }
 
 export async function archiveItem(itemId: string): Promise<void> {
-  const { error } = await supabase.from('items').update({ status: 'ARCHIVED' }).eq('id', itemId);
+  const { error } = await supabase.rpc('archive_item', { p_item_id: itemId });
   if (error) throw toAppError(error);
 }
 

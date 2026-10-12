@@ -143,6 +143,8 @@ const tr = {
   profile: {
     title: 'Profil',
     myItems: 'İlanlarım',
+    emptyItemsTitle: 'Henüz ilanın yok',
+    emptyItemsBody: 'Kullanmadığın bir şeyi hediye et, ödünç ver ya da kirala; komşuların görsün.',
     myGroups: 'Gruplarım',
     joinGroup: 'Davet koduyla katıl',
     createGroup: 'Grup oluştur',
@@ -358,6 +360,7 @@ const tr = {
       already_reviewed: 'Bu işlemi zaten değerlendirdin.',
       not_finished: 'İşlem tamamlanınca değerlendirebilirsin.',
       upload_failed: 'Fotoğraf yüklenemedi, tekrar dene.',
+      invalid_location: 'Konum geçersiz, tekrar seç.',
       active_transactions: 'Devam eden bir teslimatın var. Eşya geri dönünce ya da isteği iptal edince hesabını silebilirsin.',
       unknown: 'Bir şeyler ters gitti, tekrar dene.',
     },

@@ -433,3 +433,8 @@ enabled = true
 # is off (it would reject the newer non-JWT secret keys).
 [functions.send-push]
 verify_jwt = false
+
+# Store-review sign-in: called before any session exists, so no JWT check. The
+# function itself only accepts one address and one secret code.
+[functions.review-login]
+verify_jwt = false
